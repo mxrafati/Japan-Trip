@@ -234,7 +234,7 @@ function getDayTotal(i){const ss=getDaySpots(i);let h=ss.reduce((a,s)=>a+s.durat
 function typeLabel(t){return t==='booked'?'Pre-booked':t==='fixed'?'Fixed time':'Flexible'}
 function badgeClass(t){return t==='booked'?'badge-booked':t==='fixed'?'badge-fixed':'badge-flex'}
 function stars(r){const f=Math.floor(r),h=r-f>=0.5?1:0;return'★'.repeat(f)+'½'.repeat(h)+'☆'.repeat(5-f-h)}
-function gmapsUrl(name,lat,lng){return`https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${encodeURIComponent(name)}`}
+function gmapsUrl(name,lat,lng){return`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name+' Japan')}`}
 
 function getFilteredSpots(){
   return state.spots.filter(s=>{
