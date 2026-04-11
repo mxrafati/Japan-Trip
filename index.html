@@ -3,514 +3,682 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Japan Trip Planner</title>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Japan Trip 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --ink:#1a1a1a;--ink2:#4a4a4a;--ink3:#888;--paper:#faf8f4;--paper2:#f2ede5;--paper3:#e8e0d4;
-  --red:#c0392b;--red-light:#fdf0ef;--teal:#1a7a5e;--teal-light:#eaf4f0;
-  --gold:#b8860b;--gold-light:#fdf8ec;--purple:#5b4a8a;--purple-light:#f0edf8;
-  --border:rgba(26,26,26,0.12);--border2:rgba(26,26,26,0.07);
-  --font-display:'Shippori Mincho',serif;--font-body:'DM Sans',sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:15px;overflow-x:hidden}
-#app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto}
-.app-header{background:var(--ink);color:var(--paper);padding:16px 20px 14px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
-.app-header h1{font-family:var(--font-display);font-size:19px;font-weight:500}
-.app-header .subtitle{font-size:11px;opacity:.5;margin-top:1px;font-weight:300}
-.save-badge{font-size:11px;background:var(--teal);color:white;padding:3px 9px;border-radius:20px;opacity:0;transition:opacity .4s}
-.save-badge.show{opacity:1}
-.bottom-nav{flex-shrink:0;background:var(--ink);display:flex;border-top:1px solid rgba(255,255,255,.08);padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;padding:12px 8px 10px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);font-family:var(--font-body);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:color .15s}
-.nav-btn.active{color:#fff}
-.nav-btn svg{width:20px;height:20px}
-.tab-content{flex:1;overflow-y:auto;min-height:0}
-.tab-content.map-tab{overflow:hidden;display:flex;flex-direction:column}
-.padded{padding:16px}
+  :root {
+    --red:#C0392B;--red-light:#FDECEA;--red-mid:#E8A09A;
+    --ink:#1A1A2E;--ink2:#3D3D5C;--muted:#7B7B9A;
+    --surface:#F9F7F4;--card:#FFFFFF;--border:#E8E4DF;
+    --tokyo:#2563EB;--tokyo-light:#EFF6FF;
+    --osaka:#059669;--osaka-light:#ECFDF5;
+    --park:#D97706;--park-light:#FFFBEB;
+    --transit:#6B7280;--transit-light:#F9FAFB;
+    --night:#7C3AED;--night-light:#F5F3FF;
+    --shop:#DB2777;--shop-light:#FDF2F8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;}
+  .app-header{background:var(--ink);color:white;padding:14px 20px 10px;position:sticky;top:0;z-index:100;}
+  .app-header h1{font-family:'Noto Serif JP',serif;font-size:17px;font-weight:600;letter-spacing:.5px;}
+  .app-header p{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;}
+  .tab-bar{display:flex;background:var(--card);border-top:1px solid var(--border);position:fixed;bottom:0;left:0;right:0;z-index:100;padding-bottom:env(safe-area-inset-bottom);}
+  .tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:10px;font-family:'DM Sans',sans-serif;gap:4px;transition:color .15s;}
+  .tab-btn.active{color:var(--red);}
+  .tab-btn svg{width:22px;height:22px;}
+  .content{flex:1;overflow-y:auto;padding-bottom:80px;}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
 
-/* CITY LEGEND */
-.city-legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.legend-chip{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2)}
-.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  /* ITINERARY */
+  .city-section{margin-bottom:8px;}
+  .city-header{padding:12px 20px 8px;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px;}
+  .city-header.tokyo{background:var(--tokyo-light);border-bottom:2px solid var(--tokyo);}
+  .city-header.osaka{background:var(--osaka-light);border-bottom:2px solid var(--osaka);}
+  .city-header.transit{background:var(--transit-light);border-bottom:2px solid var(--transit);}
+  .city-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .city-header h2{font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  .city-header.tokyo h2{color:var(--tokyo);}
+  .city-header.osaka h2{color:var(--osaka);}
+  .city-header.transit h2{color:var(--transit);}
+  .day-card{background:var(--card);border-bottom:1px solid var(--border);cursor:pointer;}
+  .day-header{padding:14px 20px;display:flex;align-items:center;gap:12px;}
+  .day-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+  .day-num.tokyo{background:var(--tokyo-light);color:var(--tokyo);}
+  .day-num.osaka{background:var(--osaka-light);color:var(--osaka);}
+  .day-num.park{background:var(--park-light);color:var(--park);}
+  .day-num.transit{background:var(--transit-light);color:var(--transit);}
+  .day-info{flex:1;min-width:0;}
+  .day-date{font-size:12px;color:var(--muted);}
+  .day-title{font-size:14px;font-weight:500;color:var(--ink);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .day-tags{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;}
+  .tag{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;}
+  .tag.park{background:var(--park-light);color:var(--park);}
+  .tag.night{background:var(--night-light);color:var(--night);}
+  .tag.shop{background:var(--shop-light);color:var(--shop);}
+  .tag.free{background:#F0FDF4;color:#166534;}
+  .chevron{color:var(--muted);transition:transform .2s;font-size:16px;}
+  .day-card.open .chevron{transform:rotate(90deg);}
+  .day-detail{display:none;padding:0 20px 16px;border-top:1px solid var(--border);}
+  .day-card.open .day-detail{display:block;}
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+  .detail-col.full{grid-column:1/-1;}
+  .detail-label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+  .detail-text{font-size:13px;color:var(--ink2);line-height:1.55;white-space:pre-line;}
+  .cost-badge{display:inline-block;background:var(--red-light);color:var(--red);font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px;margin-top:10px;}
+  .shop-note{background:var(--shop-light);border-left:3px solid var(--shop);padding:8px 10px;border-radius:0 6px 6px 0;font-size:12px;color:var(--shop);margin-top:8px;line-height:1.4;}
+  .night-note{background:var(--night-light);border-left:3px solid var(--night);padding:8px 10px;border-radius:0 6px 6px 0;font-size:12px;color:var(--night);margin-top:8px;line-height:1.4;}
+  .edit-btn{width:100%;margin-top:14px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink2);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .linked-spots{margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;}
+  .linked-spots-label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .linked-spot-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;margin-bottom:5px;}
+  .linked-spot-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+  .linked-spot-dot.tokyo{background:var(--tokyo);}
+  .linked-spot-dot.osaka,.linked-spot-dot.kyoto,.linked-spot-dot.nara{background:var(--osaka);}
+  .linked-spot-body{flex:1;min-width:0;}
+  .linked-spot-name{font-size:13px;font-weight:500;color:var(--ink);}
+  .linked-spot-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+  .linked-spot-notes{font-size:11px;color:var(--ink2);margin-top:2px;font-style:italic;line-height:1.4;}
+  .linked-spot-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+  .linked-spot-rating{font-size:11px;font-weight:500;color:var(--park);}
+  .linked-spot-maps{font-size:10px;color:var(--tokyo);text-decoration:none;}
+  .linked-spots-empty{font-size:12px;color:var(--muted);font-style:italic;}
 
-/* DAY CARD */
-.day-card{background:#fff;border:1px solid var(--border);border-radius:16px;margin-bottom:12px;overflow:hidden}
-.day-card-header{padding:11px 14px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border2)}
-.day-num{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--ink3);width:24px;text-align:center;flex-shrink:0}
-.day-city-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.day-city-label{font-size:13px;font-weight:500;flex:1}
-.day-date{font-size:11px;color:var(--ink3)}
-.day-add-btn{width:26px;height:26px;border-radius:50%;background:var(--paper2);border:none;cursor:pointer;font-size:18px;color:var(--ink2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.day-card-body{padding:10px 12px}
-.hours-row{display:flex;align-items:center;gap:8px;margin-top:8px}
-.hours-track{flex:1;height:3px;background:var(--paper3);border-radius:2px;overflow:hidden}
-.hours-fill{height:100%;border-radius:2px;background:var(--teal);transition:width .3s}
-.hours-text{font-size:11px;color:var(--ink3);white-space:nowrap}
-.tl-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:4px}
-.tl-spine{display:flex;flex-direction:column;align-items:center;width:14px;flex-shrink:0;padding-top:5px}
-.tl-dot-outer{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.tl-connector{width:1.5px;flex:1;min-height:8px;margin-top:3px}
-.tl-chip-area{flex:1;min-width:0;padding-bottom:3px}
-.activity-chip{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:22px;cursor:pointer;width:100%;border:1px solid transparent;transition:opacity .15s}
-.activity-chip:active{opacity:.75}
-.chip-name{flex:1;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.chip-dur{font-size:11px;opacity:.65;white-space:nowrap;flex-shrink:0}
-.chip-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.chip-map-btn{font-size:10px;padding:2px 6px;border-radius:10px;background:rgba(255,255,255,.6);border:1px solid rgba(0,0,0,.12);cursor:pointer;color:inherit;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;font-family:var(--font-body)}
-.chip-remove{background:none;border:none;cursor:pointer;opacity:.4;font-size:16px;line-height:1;color:inherit;padding:0 2px;flex-shrink:0}
-.transit-row{display:flex;gap:10px;align-items:stretch;margin-bottom:4px}
-.transit-spine{display:flex;flex-direction:column;align-items:center;width:14px;flex-shrink:0}
-.transit-line{width:1.5px;flex:1;background:var(--paper3)}
-.transit-btn{font-size:11px;color:var(--ink3);background:var(--paper2);border:1px dashed var(--border);border-radius:10px;padding:3px 9px;cursor:pointer;font-family:var(--font-body);white-space:nowrap;margin:1px 0}
-.day-empty{font-size:13px;color:var(--ink3);padding:4px 2px;font-style:italic}
-.section-title{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:10px;padding-top:4px;display:flex;align-items:center;gap:8px}
-.count-badge{font-family:var(--font-body);font-size:11px;font-weight:400;background:var(--paper3);color:var(--ink2);padding:2px 7px;border-radius:10px}
-.unsched-item{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.unsched-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.unsched-name{flex:1;font-size:13px;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.unsched-dur{font-size:12px;color:var(--ink3);white-space:nowrap}
-.unsched-badge{font-size:10px;padding:2px 6px;border-radius:8px;white-space:nowrap;flex-shrink:0}
-.assign-btn{font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:8px;background:none;cursor:pointer;color:var(--ink2);font-family:var(--font-body);white-space:nowrap}
-.add-spot-btn{width:100%;padding:12px;font-size:13px;color:var(--teal);border:1.5px dashed var(--border);border-radius:10px;background:none;cursor:pointer;font-family:var(--font-body);margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:6px}
-.add-spot-btn:hover{background:var(--teal-light)}
-.spots-city-group{margin-bottom:20px}
-.spots-city-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.spot-list-item{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
-.spot-list-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.spot-list-info{flex:1;min-width:0}
-.spot-list-name{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.spot-list-sub{font-size:11px;color:var(--ink3);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.spot-list-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
-.edit-btn{font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:8px;background:none;cursor:pointer;color:var(--ink2);font-family:var(--font-body)}
-.chip-tokyo{background:#eaf4f0;border-color:#c4e3d9}.chip-tokyo .chip-name,.chip-tokyo .chip-dur{color:#0f4a38}
-.chip-kyoto{background:#f0edf8;border-color:#d8d0ee}.chip-kyoto .chip-name,.chip-kyoto .chip-dur{color:#3c2e6e}
-.chip-hiroshima{background:#fdf0ef;border-color:#f5c8c4}.chip-hiroshima .chip-name,.chip-hiroshima .chip-dur{color:#7a2318}
-.chip-osaka{background:#fdf8ec;border-color:#f0dead}.chip-osaka .chip-name,.chip-osaka .chip-dur{color:#6b4a08}
-.badge-booked{background:var(--purple-light);color:var(--purple)}
-.badge-flex{background:var(--teal-light);color:var(--teal)}
-.badge-fixed{background:var(--red-light);color:var(--red)}
+  /* MODALS */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--card);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom));}
+  .modal h3{font-size:16px;font-weight:600;margin-bottom:16px;}
+  .modal label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:4px;margin-top:12px;}
+  .modal input,.modal textarea,.modal select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);outline:none;}
+  .modal textarea{min-height:80px;resize:vertical;}
+  .modal-btns{display:flex;gap:10px;margin-top:20px;}
+  .btn-save{flex:1;padding:12px;background:var(--ink);color:white;border:none;border-radius:10px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;}
+  .btn-cancel{padding:12px 20px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;background:none;color:var(--ink2);}
 
-/* ── MAP TAB ── */
-.map-tab-inner{display:flex;flex-direction:column;height:100%}
-.map-filter-bar{display:flex;gap:6px;padding:10px 14px;overflow-x:auto;scrollbar-width:none;background:#fff;border-bottom:1px solid var(--border2);flex-shrink:0}
-.map-filter-bar::-webkit-scrollbar{display:none}
-.filter-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-family:var(--font-body);border:1.5px solid var(--border);background:none;cursor:pointer;color:var(--ink2);white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0;transition:all .15s}
-.filter-chip.active{border-color:transparent;color:#fff}
-.fc-dot{width:7px;height:7px;border-radius:50%}
+  /* MAP TAB */
+  .map-filter-bar{padding:10px 16px;display:flex;gap:8px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
+  .map-filter-bar::-webkit-scrollbar{display:none;}
+  .filter-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1.5px solid var(--border);background:var(--card);cursor:pointer;white-space:nowrap;color:var(--ink2);flex-shrink:0;transition:all .15s;}
+  .filter-chip.active{border-color:var(--ink);background:var(--ink);color:white;}
+  .filter-chip.tokyo.active{background:var(--tokyo);border-color:var(--tokyo);}
+  .filter-chip.osaka.active{background:var(--osaka);border-color:var(--osaka);}
+  .osm-frame{width:100%;height:340px;border:none;display:block;}
+  .city-cards-row{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--border);}
+  .city-cards-row::-webkit-scrollbar{display:none;}
+  .city-card{flex-shrink:0;border-radius:10px;padding:8px 14px;min-width:85px;text-align:center;border:1.5px solid;}
+  .spots-list-header{padding:16px 20px 8px;display:flex;justify-content:space-between;align-items:center;}
+  .spots-list-header h3{font-size:14px;font-weight:600;}
+  .spots-count{font-size:12px;color:var(--muted);}
+  .spot-row{background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;}
+  .spot-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .spot-dot.tokyo{background:var(--tokyo);}
+  .spot-dot.osaka,.spot-dot.kyoto,.spot-dot.nara{background:var(--osaka);}
+  .spot-info{flex:1;min-width:0;}
+  .spot-name{font-size:14px;font-weight:500;}
+  .spot-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+  .spot-rating{font-size:12px;font-weight:500;color:var(--park);}
+  .gmaps-link{font-size:11px;color:var(--tokyo);text-decoration:none;margin-top:3px;display:inline-block;}
+  .open-all-btn{display:block;margin:12px 16px;padding:12px;background:var(--ink);color:white;text-align:center;border-radius:10px;text-decoration:none;font-size:14px;font-weight:500;}
 
-/* map iframe */
-#map-iframe{width:100%;border:none;flex-shrink:0;transition:height .2s}
+  /* SPOTS DRAG TAB */
+  .spots-toolbar{padding:12px 16px;background:var(--card);border-bottom:1px solid var(--border);display:flex;gap:8px;position:sticky;top:0;z-index:10;}
+  .spots-toolbar input{flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--surface);outline:none;color:var(--ink);}
+  .add-spot-btn{padding:9px 16px;background:var(--red);color:white;border:none;border-radius:8px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;}
+  .drag-hint{padding:8px 16px;font-size:11px;color:var(--muted);background:var(--surface);border-bottom:1px solid var(--border);text-align:center;}
 
-/* spot cards list */
-.map-spot-list{flex:1;overflow-y:auto;background:var(--paper)}
-.map-spot-card{display:flex;gap:0;background:#fff;border-bottom:1px solid var(--border2);cursor:pointer;transition:background .12s;position:relative}
-.map-spot-card:active,.map-spot-card.active{background:#f0f0ec}
-.map-spot-card-img{width:80px;height:80px;object-fit:cover;flex-shrink:0;background:var(--paper3)}
-.map-spot-card-img-placeholder{width:80px;height:80px;flex-shrink:0;background:var(--paper3);display:flex;align-items:center;justify-content:center;font-size:22px}
-.map-spot-card-body{flex:1;padding:10px 12px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px}
-.msc-name{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.msc-city-row{display:flex;align-items:center;gap:5px}
-.msc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.msc-city{font-size:11px;color:var(--ink3)}
-.msc-day{font-size:11px;font-weight:500}
-.msc-rating{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--ink3)}
-.msc-stars{color:#f0a500;letter-spacing:-1px;font-size:12px}
-.map-spot-card-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--ink3);opacity:.4}
+  /* Unassigned pool */
+  .unassigned-section{padding:12px 16px 6px;}
+  .unassigned-label{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .unassigned-pool{display:flex;flex-wrap:wrap;gap:8px;min-height:48px;padding:8px;background:var(--card);border:1.5px dashed var(--border);border-radius:10px;}
+  .unassigned-pool.drag-over{border-color:var(--red);background:var(--red-light);}
 
-/* modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(26,26,26,.5);z-index:200;display:flex;align-items:flex-end;animation:fadeIn .15s ease}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal-sheet{background:var(--paper);width:100%;max-height:92vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:0 0 env(safe-area-inset-bottom);animation:slideUp .22s ease}
-@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-handle{width:36px;height:4px;background:var(--paper3);border-radius:2px;margin:12px auto 0}
-.modal-header{padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border2)}
-.modal-title{font-family:var(--font-display);font-size:17px;font-weight:500}
-.modal-close{width:28px;height:28px;border-radius:50%;background:var(--paper3);border:none;cursor:pointer;font-size:16px;color:var(--ink2);display:flex;align-items:center;justify-content:center}
-.modal-body{padding:16px 20px}
-.form-group{margin-bottom:14px}
-.form-label{font-size:12px;font-weight:500;color:var(--ink2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
-.form-input,.form-select{width:100%;padding:11px 14px;font-size:15px;font-family:var(--font-body);background:#fff;border:1px solid var(--border);border-radius:10px;color:var(--ink);-webkit-appearance:none}
-.form-input:focus,.form-select:focus{outline:none;border-color:var(--teal)}
-.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.modal-actions{display:flex;gap:8px;padding:12px 20px 20px}
-.btn-primary{flex:1;padding:13px;font-size:15px;font-family:var(--font-body);background:var(--ink);color:white;border:none;border-radius:10px;cursor:pointer;font-weight:500}
-.btn-secondary{flex:1;padding:13px;font-size:15px;font-family:var(--font-body);background:none;color:var(--ink2);border:1px solid var(--border);border-radius:10px;cursor:pointer}
-.btn-danger{flex:1;padding:13px;font-size:15px;font-family:var(--font-body);background:none;color:var(--red);border:1px solid rgba(192,57,43,.25);border-radius:10px;cursor:pointer}
-.move-day-item{padding:12px 14px;border-bottom:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s}
-.move-day-item:hover{background:var(--paper2)}
-.move-day-item:last-child{border-bottom:none}
-.move-day-name{font-size:14px;font-weight:500;flex:1}
-.move-day-meta{font-size:11px;color:var(--ink3)}
-.transit-hint{font-size:12px;color:var(--ink3);margin-bottom:12px;line-height:1.5}
-.transit-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.preset-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-family:var(--font-body);background:var(--paper2);border:1px solid var(--border);cursor:pointer;color:var(--ink2)}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--paper3);border-radius:2px}
+  /* Day buckets */
+  .day-bucket{margin-bottom:4px;}
+  .day-bucket-header{padding:10px 16px 4px;display:flex;align-items:center;gap:8px;position:sticky;top:52px;z-index:8;background:var(--surface);}
+  .day-bucket-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;}
+  .day-bucket-num.tokyo{background:var(--tokyo-light);color:var(--tokyo);}
+  .day-bucket-num.osaka{background:var(--osaka-light);color:var(--osaka);}
+  .day-bucket-num.park{background:var(--park-light);color:var(--park);}
+  .day-bucket-num.transit{background:var(--transit-light);color:var(--transit);}
+  .day-bucket-title{font-size:12px;font-weight:500;color:var(--ink2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .day-bucket-date{font-size:11px;color:var(--muted);flex-shrink:0;}
+  .bucket-drop{min-height:44px;padding:6px 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;border-bottom:1px solid var(--border);}
+  .bucket-drop.drag-over{background:var(--tokyo-light);border-radius:8px;}
+  .bucket-drop.osaka-drop.drag-over{background:var(--osaka-light);}
+  .empty-bucket{font-size:11px;color:var(--muted);font-style:italic;padding:4px 0;align-self:center;}
+
+  /* Spot chip (lego block) */
+  .spot-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:500;cursor:grab;user-select:none;border:1.5px solid;transition:transform .1s,box-shadow .1s;touch-action:none;}
+  .spot-chip:active{cursor:grabbing;}
+  .spot-chip.dragging{opacity:.5;transform:scale(.97);}
+  .spot-chip.tokyo{background:var(--tokyo-light);border-color:var(--tokyo);color:var(--tokyo);}
+  .spot-chip.osaka,.spot-chip.kyoto,.spot-chip.nara{background:var(--osaka-light);border-color:var(--osaka);color:var(--osaka);}
+  .spot-chip-rating{font-size:10px;opacity:.75;}
+  .spot-chip-actions{display:flex;gap:4px;margin-left:4px;}
+  .chip-edit-btn{font-size:10px;opacity:.6;cursor:pointer;background:none;border:none;padding:0;font-family:'DM Sans',sans-serif;color:inherit;}
+  .chip-edit-btn:hover{opacity:1;}
+
+  /* drag ghost */
+  #dragGhost{position:fixed;pointer-events:none;z-index:999;opacity:.85;transform:scale(1.05);transition:none;}
 </style>
 </head>
 <body>
-<div id="app"></div>
+<div class="app-header">
+  <h1>Japan Trip 2026 ✦</h1>
+  <p>May 21 – June 5 &nbsp;·&nbsp; Tokyo &amp; Osaka &nbsp;·&nbsp; Family of 4</p>
+</div>
+
+<div class="content">
+  <div class="tab-panel active" id="panel-itinerary"></div>
+
+  <!-- MAP TAB -->
+  <div class="tab-panel" id="panel-map">
+    <div class="map-filter-bar" id="mapFilters">
+      <div class="filter-chip active" data-city="all" data-lat="36.5" data-lng="137" data-zoom="6">All Japan</div>
+      <div class="filter-chip tokyo" data-city="tokyo" data-lat="35.6762" data-lng="139.6503" data-zoom="12">Tokyo</div>
+      <div class="filter-chip osaka" data-city="osaka" data-lat="34.6937" data-lng="135.5023" data-zoom="12">Osaka</div>
+      <div class="filter-chip osaka" data-city="kyoto" data-lat="35.0116" data-lng="135.7681" data-zoom="13">Kyoto</div>
+      <div class="filter-chip osaka" data-city="nara" data-lat="34.6851" data-lng="135.8048" data-zoom="13">Nara</div>
+    </div>
+    <iframe id="osmFrame" class="osm-frame"
+      src="https://www.openstreetmap.org/export/embed.html?bbox=129.5%2C30.5%2C145.8%2C45.5&layer=mapnik&marker=35.6762%2C139.6503"
+      allowfullscreen loading="lazy"></iframe>
+    <div class="city-cards-row" id="citySummaryCards"></div>
+    <a class="open-all-btn" id="openAllInMaps" href="#">Open all spots in Google Maps</a>
+    <div class="spots-list-header">
+      <h3>Spots list</h3>
+      <span class="spots-count" id="mapSpotsCount"></span>
+    </div>
+    <div id="mapSpotsList"></div>
+  </div>
+
+  <!-- SPOTS DRAG TAB -->
+  <div class="tab-panel" id="panel-spots">
+    <div class="spots-toolbar">
+      <input type="text" id="spotSearch" placeholder="Search spots..." oninput="renderSpots()">
+      <button class="add-spot-btn" onclick="openAddSpot()">+ Add</button>
+    </div>
+    <div class="drag-hint">Hold &amp; drag a spot chip onto any day to assign it</div>
+    <div id="spotsBoard"></div>
+  </div>
+</div>
+
+<nav class="tab-bar">
+  <button class="tab-btn active" data-tab="itinerary" onclick="switchTab('itinerary',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Itinerary
+  </button>
+  <button class="tab-btn" data-tab="map" onclick="switchTab('map',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    Map
+  </button>
+  <button class="tab-btn" data-tab="spots" onclick="switchTab('spots',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/><line x1="17" y1="5" x2="7" y2="5"/><line x1="17" y1="12" x2="7" y2="12"/><line x1="17" y1="19" x2="7" y2="19"/></svg>
+    Spots
+  </button>
+</nav>
+
+<!-- Edit Day Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3 id="editModalTitle">Edit Day</h3>
+    <label>Date</label><input type="text" id="editDate">
+    <label>Morning</label><textarea id="editMorning"></textarea>
+    <label>Afternoon</label><textarea id="editAfternoon"></textarea>
+    <label>Evening</label><textarea id="editEvening"></textarea>
+    <label>Estimated cost (group)</label><input type="text" id="editCost">
+    <label>Notes</label><textarea id="editNotes" placeholder="Extra notes..."></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveDay()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Spot Modal -->
+<div class="modal-overlay" id="spotModal">
+  <div class="modal">
+    <h3 id="spotModalTitle">Add spot</h3>
+    <label>Name</label><input type="text" id="sName" placeholder="e.g. Fushimi Inari Shrine">
+    <label>City</label>
+    <select id="sCity">
+      <option value="tokyo">Tokyo</option>
+      <option value="osaka">Osaka</option>
+      <option value="kyoto">Kyoto</option>
+      <option value="nara">Nara</option>
+    </select>
+    <label>Duration needed</label><input type="text" id="sDuration" placeholder="e.g. 2–3 hours">
+    <label>Google rating (1–5)</label><input type="number" id="sRating" min="1" max="5" step="0.1" placeholder="e.g. 4.6">
+    <label>Google Maps URL (optional)</label><input type="url" id="sUrl" placeholder="https://maps.google.com/...">
+    <label>Notes</label><textarea id="sNotes" placeholder="Tips, booking info..."></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeSpotModal()">Cancel</button>
+      <button class="btn-save" onclick="saveSpot()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="dragGhost" style="display:none"></div>
+
 <script>
-const START_DATE=new Date(2026,4,16);
-function getDate(i){const d=new Date(START_DATE);d.setDate(d.getDate()+i);return d}
-function fmtDateShort(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+const STORAGE_KEY = 'japan2026_v4';
 
-const CITY_DOT={tokyo:'#1a7a5e',kyoto:'#5b4a8a',hiroshima:'#c0392b',osaka:'#b8860b'};
-const CHIP_CLASS={tokyo:'chip-tokyo',kyoto:'chip-kyoto',hiroshima:'chip-hiroshima',osaka:'chip-osaka'};
-const CITY_LABEL={tokyo:'Tokyo',kyoto:'Kyoto',hiroshima:'Hiroshima',osaka:'Osaka'};
-const CITY_EMOJI={tokyo:'🗼',kyoto:'⛩️',hiroshima:'🕊️',osaka:'🏯'};
-const TRANSIT_DEF={tokyo:{tokyo:30,kyoto:150,hiroshima:200,osaka:180},kyoto:{tokyo:150,kyoto:25,hiroshima:90,osaka:70},hiroshima:{tokyo:200,kyoto:90,hiroshima:20,osaka:90},osaka:{tokyo:180,kyoto:70,hiroshima:90,osaka:20}};
-const DAYS_CONFIG=[
-  {city:'tokyo'},{city:'tokyo'},{city:'tokyo'},{city:'tokyo'},
-  {city:'tokyo'},{city:'tokyo'},{city:'tokyo'},{city:'tokyo'},
-  {city:'kyoto'},{city:'kyoto'},{city:'kyoto'},
-  {city:'hiroshima'},{city:'osaka'},{city:'osaka'}
+const DEFAULT_DAYS = [
+  {id:1,date:'May 21 Thu',city:'tokyo',type:'tokyo',title:'Arrival – Asakusa',morning:'Arrive afternoon\nCheck in Asakusa accommodation (~2h)',afternoon:'Senso-ji evening stroll (1.5h)\nNakamise Street lanterns at dusk\nAsakusa Culture Tourist Info Center — free 8th-floor observation deck',evening:'Ramen dinner near Asakusa\nSimple local shop — welcoming for kids',cost:'Free + ¥800–1,200 (dinner)',notes:'',tags:['free']},
+  {id:2,date:'May 22 Fri',city:'tokyo',type:'tokyo',title:'Senso-ji + Ueno + Ameyoko',morning:'Senso-ji Temple (2–3h)\nArrive by 8am before crowds\nOmikuji fortune slips, ningyo-yaki cakes',afternoon:'Ueno Park (1.5h) — free stroll, Shinobazu Pond paddle boats ¥700\nUeno Zoo (2–3h) — pandas & giraffes, kids under 12 free',evening:'Ameyoko Market (1h)\nVibrant street market at Zoo south exit — cheap street food & bargain clothing\n🛍️ Nearby shopping (optional): Ameyoko is the market itself — affordable clothes, sneakers & souvenirs',cost:'Free (Senso-ji) · ¥700 boats · ¥600/adult Zoo · Free (Ameyoko)',notes:'',tags:['free','shop']},
+  {id:3,date:'May 23 Sat',city:'tokyo',type:'tokyo',title:'TeamLab Planets + Odaiba',morning:'TeamLab Planets (2–3h)\nToyosu — book in advance\nBarefoot water rooms + floating orchids\nLeave stroller at entrance',afternoon:'Odaiba Seaside Park (2h) — small beach, Rainbow Bridge views — free\nUnicorn Gundam Statue (30 min) — free\n🛍️ Nearby shopping (optional): DiverCity mall is right at the Gundam — Japanese fashion & souvenir shops inside',evening:'Dinner in Odaiba (1h)\nDiverCity Tokyo Plaza — family-friendly restaurants',cost:'¥9,600 (TeamLab 3 adults) · Free (Odaiba) · ¥1,000–2,000 dinner',notes:'',tags:['shop']},
+  {id:4,date:'May 24 Sun',city:'tokyo',type:'tokyo',title:'Shibuya Crossing + Shibuya Sky',morning:'Shibuya Crossing (1h)\nSunday morning = highest energy\nWatch from Starbucks 2nd floor — calmer with toddler',afternoon:'Shibuya Sky (1.5h)\nOpen-air rooftop 360° views — safe for 4-year-old\nBook online in advance\n🛍️ Nearby shopping (optional): Shibuya 109 & Shibuya Scramble Square below — trendy Japanese youth fashion',evening:'Dinner in Shibuya (1h)\nHuge variety at all budgets',cost:'Free (Crossing) · ¥6,000 (Shibuya Sky 3 adults) · ¥1,000–2,000 dinner',notes:'',tags:['shop']},
+  {id:5,date:'May 25 Mon',city:'tokyo',type:'tokyo',title:'★ Studio Ghibli Museum',morning:'★ Studio Ghibli Museum (3h)\nPRE-BOOK REQUIRED — Apr 10 @ 6pm Vancouver time at l-tike.com\nMitaka, 45 min west. Morning slot recommended',afternoon:'Inokashira Park (2h)\nBeautiful lake park next to museum\nRowboats ¥700/30 min — daughter will love it',evening:'Kichijoji neighbourhood (1.5h)\nDonguri Republic (Ghibli store), great lunch spots, relaxed stroll\n🛍️ Nearby shopping (optional): Kichijoji has charming boutiques & unique clothing stores along the main arcade',cost:'¥1,000/adult ¥100 child (Ghibli) · ¥700 rowboats · Free (Kichijoji)',notes:'BOOKING REQUIRED: l-tike.com on April 10 at 6pm Vancouver time',tags:['shop']},
+  {id:6,date:'May 26 Tue',city:'tokyo',type:'park',title:'★ Tokyo Disneyland — Full Day',morning:'★ Tokyo Disneyland — Full Day (10h+)\nPRE-BOOK REQUIRED — Tuesdays are quietest\n40–50 min from Asakusa',afternoon:'(Continued — full day at park)\nClassic rides, parades, castle\nPerfect for 4-year-old — most rides no height requirement',evening:'Return to hotel, early night\n(Long day — plan for tired feet!)',cost:'¥23,700–28,200 (3 adults) · ¥4,900–5,600 (child)',notes:'BOOKING REQUIRED: tokyodisneyresort.jp — book date-specific tickets early',tags:['park']},
+  {id:7,date:'May 27 Wed',city:'tokyo',type:'tokyo',title:'Shinjuku Gyoen + Nightlife',morning:'Shinjuku Gyoen (2h)\nStunning national garden — flat paths, perfect for picnic\nLush green in late May',afternoon:'Tokyo Metropolitan Gov\'t Building (1h)\nFREE observation decks at 202m\nShinjuku neighbourhood stroll (1.5h)\n🛍️ Nearby shopping (optional): Takashimaya Times Square & Lumine Est at Shinjuku Station — great for Japanese clothing',evening:'🌙 NIGHTLIFE NIGHT\nFriend babysits — you go out!\nMuse Roppongi (foreigner-friendly, easy to navigate)\nor Womb Shibuya (best electronic/techno)\nGo after 11pm — peak midnight to 3am',cost:'¥1,500 (Gyoen 3 adults) · Free (Gov\'t Building) · ¥1,500–3,000/person club',notes:'Clubs: Muse Roppongi easiest for first-timers. Womb Shibuya for electronic music. Cover ¥1,500–3,000 includes 1–2 drinks.',tags:['night','shop']},
+  {id:8,date:'May 28 Thu',city:'tokyo',type:'tokyo',title:'Meiji Shrine + Harajuku + Akihabara',morning:'Meiji Shrine (1.5h)\nVast forested Shinto shrine — free & deeply peaceful\nGravel path through tall cedar trees',afternoon:'Harajuku Takeshita Street (1.5h)\nColourful, fun — crepes & rainbow candy floss, kids love it\nOmotesando (30 min walk — same street)\n🛍️ Nearby shopping (optional): Omotesando is Japan\'s premier fashion street — unique Japanese brands & designer stores, zero detour from Harajuku',evening:'Akihabara (2h)\nElectronics & anime district\nPokémon Center, multi-floor arcades, Gachapon machines ¥200–500\n🛍️ Nearby shopping (optional): Akihabara is shopping — anime merch, electronics & unique souvenirs',cost:'Free (Meiji Shrine) · Free to wander (Harajuku) · Spending (Akihabara)',notes:'',tags:['free','shop']},
+  {id:9,date:'May 29 Fri',city:'tokyo',type:'tokyo',title:'Sumida Park + Shopping Day',morning:'Sumida Park (1.5h)\nRiverside park, free, beautiful in late spring\nSenso-ji area one final visit',afternoon:'🛍️ DEDICATED SHOPPING HALF-DAY\nNakamise Shopping Street (2h)\nBest place in Tokyo for souvenirs — traditional crafts, snacks, gifts\nAsakusa side streets for clothing & unique finds',evening:'Farewell Tokyo dinner — Izakaya (2h)\nJapanese pub-restaurant near Asakusa — celebrate Tokyo!',cost:'Free (Sumida Park) · Shopping budget (Nakamise) · ¥2,000–4,000 dinner',notes:'',tags:['shop']},
+  {id:10,date:'May 30 Sat',city:'tokyo',type:'transit',title:'Depart Tokyo → Osaka',morning:'Buffer / flexible morning\nExtra shopping or slow breakfast before departing',afternoon:'Depart Tokyo → Osaka\nPack & check out\nBoard Shinkansen (~2.5h, JR Pass covered)',evening:'Arrive Osaka — evening\nCheck in near Namba\nLight dinner near Dotonbori',cost:'JR Pass (Shinkansen) · ¥800–1,500 dinner',notes:'',tags:[]},
+  {id:11,date:'May 31 Sun',city:'osaka',type:'osaka',title:'Arrive Osaka + Dotonbori',morning:'Arrive / settle\nNamba check-in\nRest morning',afternoon:'Dotonbori (2–3h)\nNeon canal district — takoyaki ¥500–700, giant mechanical crab\nWalk the canal, explore Namba\n🛍️ Nearby shopping (optional): Shinsaibashi arcade directly connected to Dotonbori — clothes, souvenirs & Japanese brands',evening:'Dotonbori at night (1h)\nEven more spectacular lit up — best time for photos',cost:'Free to explore · ¥500–700 takoyaki · Free evening walk',notes:'',tags:['free','shop']},
+  {id:12,date:'Jun 1 Mon',city:'osaka',type:'osaka',title:'Osaka Castle + Kuromon Market',morning:'Osaka Castle (2–3h)\nGrounds free, tower museum ¥600\nGreat for a picnic',afternoon:'Kuromon Ichiba Market (1.5h)\nOsaka\'s Kitchen — 170+ stalls, fresh seafood & street food\n🛍️ Nearby shopping (optional): Amerika-mura (5 min walk from Kuromon) — vintage Japanese streetwear & unique clothing',evening:'Shinsekai neighbourhood (1.5h)\nTry kushikatsu (deep-fried skewers) — very local & affordable',cost:'Free (grounds) · ¥600/adult (tower) · Food budget · ¥800–1,200 kushikatsu',notes:'',tags:['shop']},
+  {id:13,date:'Jun 2 Tue',city:'osaka',type:'park',title:'★ Universal Studios Japan — Full Day',morning:'★ Universal Studios Japan — Full Day (10h+)\nPRE-BOOK REQUIRED — book well in advance\nUniversal Wonderland designed for young children',afternoon:'(Continued — full day at park)\nSuper Nintendo World: requires Area Timed Entry Ticket — book separately\nChild Switch available for adult-only rides',evening:'Return to hotel, early night\n(Very full day — pace yourselves!)',cost:'¥25,800–30,600 (3 adults) · ¥5,400–6,400 (child) + Area Timed Entry',notes:'BOOKING REQUIRED: usj.co.jp — book date-specific tickets early. Super Nintendo World needs separate Area Timed Entry.',tags:['park']},
+  {id:14,date:'Jun 3 Wed',city:'kyoto',type:'osaka',title:'Day Trip: KYOTO',morning:'Day Trip: KYOTO\nHankyu or JR train ~30 min (¥560–1,100 round trip)\nArrive early — Fushimi Inari before 8am beats the crowds',afternoon:'Fushimi Inari Shrine (2h) — FREE iconic torii gate tunnels\nArashiyama Bamboo Grove (1h) — FREE, stunning, great for kids\nTenryu-ji Temple garden ¥500 (optional)',evening:'Kinkaku-ji Golden Pavilion (1h) — ¥500/adult\nNishiki Market stroll (30 min)\nReturn to Osaka by train\n🛍️ Nearby shopping (optional): Nishiki Market — traditional Japanese ceramics, crafts & food gifts',cost:'¥560–1,100 (round trip) · Free (Fushimi + Bamboo) · ¥500/adult Kinkaku-ji · ¥1,000–1,500 food',notes:'',tags:['free','shop']},
+  {id:15,date:'Jun 4 Thu',city:'nara',type:'osaka',title:'Day Trip: NARA — Deer Park',morning:'Day Trip: NARA\n45–60 min train from Osaka (~¥800 round trip)\nFree-roaming deer everywhere — kids absolutely love this',afternoon:'Todai-ji Temple (2h)\nWorld\'s largest wooden building — Giant Buddha inside\nDeer roam the grounds freely\nNara Park stroll — buy deer crackers ¥200\n🛍️ Nearby shopping (optional): Naramachi district (10 min walk) — traditional crafts, pottery & handmade goods unique to Nara',evening:'Return to Osaka\nFarewell Japan dinner near Dotonbori\nFinal evening stroll through Dotonbori lights',cost:'~¥800 round trip · ¥600/adult Todai-ji · ¥200 deer crackers · ¥2,000–4,000 farewell dinner',notes:'',tags:['free','shop']},
+  {id:16,date:'Jun 5 Fri',city:'osaka',type:'transit',title:'Departure — Fly Home',morning:'⚠️ If staying Osaka: depart hotel by 9:30–10am latest\nIf staying Tokyo: relaxed morning, depart by 1pm',afternoon:'Shinkansen Osaka→Tokyo (~2.5h) + Narita Express (~60 min)\nOR Narita Express from Tokyo (~60 min)\nMust arrive Narita by 2:30pm for 4pm flight',evening:'Fly home to Canada ✈️\nArigato gozaimashita!',cost:'Option A (from Osaka): ~¥17,000 · Option B (from Tokyo): ~¥3,000',notes:'CRITICAL: Must arrive Narita by 2:30pm for 4pm international flight.',tags:[]}
 ];
 
-// Rich spot data with coords, photos, ratings
-const SPOT_DATA={
-  1:{lat:35.7148,lng:139.7967,rating:4.5,ratingCount:'92k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNFx1AO9KxgGPsyUJQ0K4MYskUgg7QivD4FOgWU9HpqWfEAxYbRZp_3Z8Gq02Zsd-5fjeTY5ksxGnK8CoLGv0McQjT41ku7JUiZWhP2A6mrFlUVz9SUydQOUKOV3tuw3Gqqp57R3gs8JPEOh68I=s400-w400-h300'},
-  2:{lat:35.6962,lng:139.5704,rating:4.5,ratingCount:'18k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNEiD0hSrnNoU6GPq-samJe-qpbOjnVAJjvK943347x2GUG30aHYUrtWlh-5J6jbAf_CAdk5tcG43ET165RcV7JyX5aOYDH4o8sW_hkUWkA0OGnBvof4VbR4xvEfmaLdl0e3cPk2UOS4zAVCRTs=s400-w400-h300'},
-  3:{lat:35.6621,lng:139.7433,rating:4.6,ratingCount:'27k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNFktpM9oovXuPVWtWK1I8MF7GRHF6iMi_AYkieBbEShLZ475odiWIU90FzKS6FCXrb9OufCbJcykFHSYQGuoLLejxOX1F1g7BwiZJkAa7dzAVfppt_5EG6tajFEHkE_npaZFrJ0_6mQV5ChCg=s400-w400-h300'},
-  4:{lat:35.6329,lng:139.8804,rating:4.6,ratingCount:'121k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNFJwwzhOlPqORG28xp82TGaybXQQmSDpdmJ3dXgXfnsZefqoLoRuhzjv03hZqJtTWlRe6dyRa9p6QrVuMiwykaFoJhtVby1MXRPQIxEeDuLT_3a9eIzPjSeX8S_fNvMeR2ZvvJrkG2rx6pdfQ=s400-w400-h300'},
-  5:{lat:34.9677,lng:135.7792,rating:4.6,ratingCount:'85k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNH6I3GUZXGTouSRdcyeKjNqoE6VkPNCe4pzM_CoBbamIALgLI3wUDVsctGtqsJxWYZLp7QiJnO0FZKDG1TzWTaQ2sRh0I3_Qj8CG5q7mAmfDeKC0rS7bk_y7UwlSkUU_Yj0IgbFR6jAhY-dcg=s400-w400-h300'},
-  6:{lat:35.0168,lng:135.6713,rating:4.3,ratingCount:'20k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNHbzf3gS_KUm_Zr582UESAZSpfvzTQzTyfdcXFUylPCDCVq48C84Mat4YlknCwpmOONNflNGJi3Pr7_jy2NVRAaswJWxypl70ZMylTmhTPRjEYei-5wKji8oLXmYyuK0wfExs0bDBGi8vuU4GE=s400-w400-h300'},
-  7:{lat:35.0050,lng:135.7647,rating:4.3,ratingCount:'50k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNE38ZtRJlB3oVt7ONxlab7dfbEv1ldYv3P09Cw50miRv9ELImLUjV1x6EgRyU4921MeSI2aD8uPduxinyxNj5btp6kVqLlaa0-gXEiswCTGOxgNnXMgaue6kC0aiB5RAt99c_GLIWvN_TiIlA=s400-w400-h300'},
-  8:{lat:34.3927,lng:132.4522,rating:4.7,ratingCount:'28k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNFgSaufFrvp-cjKOF8mq7pvPqqo9CZXuqYdKkEYUmswBVBf-asPD6ieP3q3McbezE527Cr-KAPKb5zS0cUeaORIT16GmvsY6Ge9gRxsPf7GoPsajgNYNULNoInBKA2Lhe9WStxmKFXV1VbIfA=s400-w400-h300'},
-  9:{lat:34.2732,lng:132.3052,rating:4.7,ratingCount:'2.6k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNHZu5IXrdLDCJxG8LVa30cyfBjRi6iP-sU6x5rlys7Xb0nGNPGSMuBrLputidazaOLsh2BFVwi0qKZNFEnQeP1aQgiQ7ZD-H--YkQsbFGkj5IDyS-X0dY0QuBmv6xx7e3UHtfStEPX4JeQQ=s400-w400-h300'},
-  10:{lat:34.6873,lng:135.5259,rating:4.4,ratingCount:'92k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNF0nVKXhrKrRbb8AIJMCtTt-mpSdntkWZ8WOjP5BcflsSb-RTxtxnczw56whzCMUH3u5CLQBHjmjrV1Ev-BGSdmTAoZ8czEd5Nsp7WBtlLQNtiEPwa1OCsjtHt7Q2DFGJyRtbgB8n4QtnOIcQ=s400-w400-h300'},
-  11:{lat:34.6686,lng:135.5031,rating:4.4,ratingCount:'—',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNHyuJ6oXsyywc9F4yp5GQxZ37Rshh3Kl6GnuYx0dp8wz5lnVzi2uHrhDdynlZudL9rBkJSpwyzXnLsmts8b6Osyc33XaQol0l61-4g05YpdBBTPdrSdqI3N_5yyRYWUnEj7qTp58sSBJNO5Og=s400-w400-h300'},
-  12:{lat:35.7148,lng:139.7734,rating:4.4,ratingCount:'33k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNFEZrY8c1BLwu324Yd9eCyLSbZ8oAfvbtsU3vph5S3FOGY3Ugi_Q2PptMXCsgALOsXGFqwDYIvODpbNTLO3PwsMCAVGzR8OzQ35hGrqfxNDaY5O3fxhHSg2lmFyin_tLs7FtLg22g_iptWurPA=s400-w400-h300'},
-  13:{lat:35.6852,lng:139.7101,rating:4.6,ratingCount:'43k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNFjKEUjVB9hHO_ZprNAzZy7XoF2J6ElGthF6Gb3zN5J2duqTD2ceSX56XDGo-V632AbcRanfy-2jZHPYcvUZ87pxKfwZ1bLPeqRqVmCcEojmmHq47XHVURAWmaAYbVEn2P8aL842-bE68PZhs8=s400-w400-h300'},
-  14:{lat:35.6764,lng:139.6993,rating:4.6,ratingCount:'48k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNF1zPq8oToGTYTX5EqB43c8Tnc9KDkLcHCQ6G8i4epPJZvnY3UgAV7b0bE7rVKyimJPclQ8I__cU362pC4JIyFdktfuGUZCl8DSoWisowTwHu80NHwDbheWcwT9Kv1JsjJuEuU4kDxPx7Cx2ns=s400-w400-h300'},
-  15:{lat:35.6996,lng:139.7714,rating:4.3,ratingCount:'—',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNHlMGh5fqwyJoQFLibSegJJ6lhzd9LY4ezxlNZ9g8fukOC2-YTgvhhiLfcEJoG6qhEfH77CQX8nRlcTgfV97eGN7S4Y0bXzlZIT6U9wTZz3aQiuHzoHo6kUWavxTR3szGJlT1SefEbX3hq0=s400-w400-h300'},
-  16:{lat:35.6595,lng:139.7006,rating:4.5,ratingCount:'19k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNFRFzmh0nL0v7jNWUsG_vCFiD70vbMb98JmyygNXSd5zzqy_Zi2T-7Lb0fzCUNLqXdxzURAQEKMnlnaHut3yOKpWwYNSx9hI1xItQattllZk-oO06T5SrolaHR7SKacfquHpCvmlGm01jhn_g=s400-w400-h300'},
-  17:{lat:35.7101,lng:139.8107,rating:4.4,ratingCount:'112k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNGjs_Y_6x9ZmHSd7HnYKACkx89yzMo8uy6igBsD_GvMX-5KyQgdJxsofzRP4Rl2KtrmpMDsn8TCZZpLoisXPFs0K5mzUKeKRUNSlAvFoAUkyFJT7cegvwZaoVAQ9PCgbqa79D39cme-uJ6ogA=s400-w400-h300'},
-  18:{lat:35.7277,lng:139.7657,rating:4.1,ratingCount:'11k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNE70pB789JjyDbczp7N2T2dBP566KQ9v2tHRBI21D4S8cRpQKnLRqLFsIpnCoymEyyVsSkYLajJe93zKgNfNOXi34uHt9mPRhEURnemUQ8rSKY9qqEIeNXrfm595ntm0u0Itwj2dl0eHn5fmQ=s400-w400-h300'},
-  19:{lat:35.0394,lng:135.7292,rating:4.5,ratingCount:'66k',photo:'https://lh3.googleusercontent.com/place-photos/AL8-SNEqEEyV5JxjFkI40dkZj0m7nIv33X6rEzfxY20vRW0L-9EJtuQECRM0uZ4XBSl8kf8HtD3tMFmnUrVTL5z6vQan-OdJbC4ags4AtANodalyVcWKQCYI0qETdnN-9o1F3sB7D921G1kaRdAjBP4=s400-w400-h300'},
-};
-
-const DEFAULT_SPOTS=[
-  {id:1,name:'Senso-ji Temple',city:'tokyo',duration:2,type:'flex',note:'Go early morning',day:0,order:0},
-  {id:2,name:'Studio Ghibli Museum',city:'tokyo',duration:3,type:'booked',note:'Book April 10!',day:null,order:0},
-  {id:3,name:'TeamLab Borderless',city:'tokyo',duration:4,type:'booked',note:'Book online in advance',day:null,order:0},
-  {id:4,name:'Tokyo Disneyland',city:'tokyo',duration:10,type:'booked',note:'Full day — book early',day:null,order:0},
-  {id:5,name:'Fushimi Inari Shrine',city:'kyoto',duration:3,type:'flex',note:'Go early morning',day:9,order:0},
-  {id:6,name:'Arashiyama Bamboo',city:'kyoto',duration:3,type:'flex',note:'Early morning',day:10,order:0},
-  {id:7,name:'Nishiki Market',city:'kyoto',duration:2,type:'flex',note:'Lunch stop',day:9,order:1},
-  {id:8,name:'Hiroshima Peace Park',city:'hiroshima',duration:3,type:'flex',note:'',day:11,order:0},
-  {id:9,name:'Miyajima Island',city:'hiroshima',duration:5,type:'flex',note:'Ferry from Hiroshima',day:11,order:1},
-  {id:10,name:'Osaka Castle',city:'osaka',duration:3,type:'flex',note:'',day:12,order:0},
-  {id:11,name:'Dotonbori',city:'osaka',duration:3,type:'flex',note:'Evening best',day:12,order:1},
-  {id:12,name:'Ueno Park + Zoo',city:'tokyo',duration:3,type:'flex',note:'Great for kids',day:1,order:0},
-  {id:13,name:'Shinjuku Gyoen',city:'tokyo',duration:2,type:'flex',note:'',day:2,order:0},
-  {id:14,name:'Meiji Shrine',city:'tokyo',duration:2,type:'flex',note:'',day:2,order:1},
-  {id:15,name:'Akihabara',city:'tokyo',duration:3,type:'flex',note:'Electronics & anime',day:3,order:0},
-  {id:16,name:'Shibuya Crossing',city:'tokyo',duration:1,type:'flex',note:'',day:3,order:1},
-  {id:17,name:'Tokyo Skytree',city:'tokyo',duration:2,type:'flex',note:'Book tickets online',day:null,order:0},
-  {id:18,name:'Yanaka Old Town',city:'tokyo',duration:2,type:'flex',note:'Free & authentic',day:null,order:0},
-  {id:19,name:'Kinkaku-ji (Golden Pavilion)',city:'kyoto',duration:2,type:'flex',note:'',day:10,order:1},
+const DEFAULT_SPOTS = [
+  {id:'s1',name:'Senso-ji Temple',city:'tokyo',dayId:2,duration:'2–3 hours',rating:4.7,url:'https://maps.google.com/?q=Senso-ji+Temple+Tokyo',notes:'Arrive by 8am to beat crowds. Free entry.'},
+  {id:'s2',name:'TeamLab Planets',city:'tokyo',dayId:3,duration:'2–3 hours',rating:4.6,url:'https://maps.google.com/?q=TeamLab+Planets+Tokyo',notes:'Pre-booking required. ¥3,200/adult.'},
+  {id:'s3',name:'Shibuya Crossing',city:'tokyo',dayId:4,duration:'1 hour',rating:4.6,url:'https://maps.google.com/?q=Shibuya+Crossing+Tokyo',notes:'Best Sunday morning. View from Starbucks 2F.'},
+  {id:'s4',name:'Shibuya Sky',city:'tokyo',dayId:4,duration:'1.5 hours',rating:4.5,url:'https://maps.google.com/?q=Shibuya+Sky+observation+deck',notes:'Book online in advance. ¥2,000/adult.'},
+  {id:'s5',name:'Studio Ghibli Museum',city:'tokyo',dayId:5,duration:'3 hours',rating:4.7,url:'https://maps.google.com/?q=Ghibli+Museum+Mitaka',notes:'BOOKING REQUIRED: l-tike.com on Apr 10 at 6pm Vancouver time.'},
+  {id:'s6',name:'Inokashira Park',city:'tokyo',dayId:5,duration:'2 hours',rating:4.5,url:'https://maps.google.com/?q=Inokashira+Park+Kichijoji',notes:'Rowboats ¥700/30 min. Next to Ghibli Museum.'},
+  {id:'s7',name:'Tokyo Disneyland',city:'tokyo',dayId:6,duration:'Full day',rating:4.7,url:'https://maps.google.com/?q=Tokyo+Disneyland',notes:'Book at tokyodisneyresort.jp. Tuesdays quietest.'},
+  {id:'s8',name:'Shinjuku Gyoen',city:'tokyo',dayId:7,duration:'2 hours',rating:4.6,url:'https://maps.google.com/?q=Shinjuku+Gyoen+National+Garden',notes:'¥500/adult. Beautiful in late May.'},
+  {id:'s9',name:'Meiji Shrine',city:'tokyo',dayId:8,duration:'1.5 hours',rating:4.6,url:'https://maps.google.com/?q=Meiji+Shrine+Tokyo',notes:'Free entry. Arrive early for peaceful atmosphere.'},
+  {id:'s10',name:'Harajuku Takeshita Street',city:'tokyo',dayId:8,duration:'1.5 hours',rating:4.3,url:'https://maps.google.com/?q=Takeshita+Street+Harajuku',notes:'Kids love the crepes and candy floss.'},
+  {id:'s11',name:'Akihabara',city:'tokyo',dayId:8,duration:'2 hours',rating:4.4,url:'https://maps.google.com/?q=Akihabara+Tokyo',notes:'Pokémon Center, arcades, Gachapon machines.'},
+  {id:'s12',name:'Dotonbori',city:'osaka',dayId:11,duration:'2–3 hours',rating:4.4,url:'https://maps.google.com/?q=Dotonbori+Osaka',notes:'Best at night. Try takoyaki ¥500–700.'},
+  {id:'s13',name:'Osaka Castle',city:'osaka',dayId:12,duration:'2–3 hours',rating:4.4,url:'https://maps.google.com/?q=Osaka+Castle',notes:'Grounds free. Tower museum ¥600/adult.'},
+  {id:'s14',name:'Kuromon Ichiba Market',city:'osaka',dayId:12,duration:'1.5 hours',rating:4.2,url:'https://maps.google.com/?q=Kuromon+Ichiba+Market+Osaka',notes:'170+ stalls. Fresh seafood & street food.'},
+  {id:'s15',name:'Universal Studios Japan',city:'osaka',dayId:13,duration:'Full day',rating:4.5,url:'https://maps.google.com/?q=Universal+Studios+Japan+Osaka',notes:'Book at usj.co.jp. Super Nintendo World needs separate ticket.'},
+  {id:'s16',name:'Fushimi Inari Shrine',city:'kyoto',dayId:14,duration:'2 hours',rating:4.7,url:'https://maps.google.com/?q=Fushimi+Inari+Shrine+Kyoto',notes:'Free entry. Arrive before 8am to beat crowds.'},
+  {id:'s17',name:'Arashiyama Bamboo Grove',city:'kyoto',dayId:14,duration:'1 hour',rating:4.4,url:'https://maps.google.com/?q=Arashiyama+Bamboo+Grove+Kyoto',notes:'Free entry. Go early morning for best experience.'},
+  {id:'s18',name:'Kinkaku-ji Golden Pavilion',city:'kyoto',dayId:14,duration:'1 hour',rating:4.5,url:'https://maps.google.com/?q=Kinkakuji+Temple+Kyoto',notes:'¥500/adult. One of Japan\'s most iconic sights.'},
+  {id:'s19',name:'Todai-ji Temple + Nara Park',city:'nara',dayId:15,duration:'2–3 hours',rating:4.6,url:'https://maps.google.com/?q=Todaiji+Temple+Nara',notes:'¥600/adult. Deer crackers ¥200. Kids will love it.'}
 ];
 
-let state={spots:[],transit:{},nextId:20,activeTab:'calendar',modal:null,moveId:null,transitEdit:null,form:{},mapFilter:'all',activeSpotId:null};
+let state = loadState();
 
 function loadState(){
-  try{const s=localStorage.getItem('japan-trip-v3');if(s){const p=JSON.parse(s);state.spots=p.spots||DEFAULT_SPOTS;state.transit=p.transit||{};state.nextId=p.nextId||20;}else{state.spots=JSON.parse(JSON.stringify(DEFAULT_SPOTS));}}
-  catch(e){state.spots=JSON.parse(JSON.stringify(DEFAULT_SPOTS));}
+  try{const s=localStorage.getItem(STORAGE_KEY);if(s)return JSON.parse(s);}catch(e){}
+  return{days:JSON.parse(JSON.stringify(DEFAULT_DAYS)),spots:JSON.parse(JSON.stringify(DEFAULT_SPOTS))};
 }
-let saveTimer=null;
-function saveState(){
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(()=>{
-    localStorage.setItem('japan-trip-v3',JSON.stringify({spots:state.spots,transit:state.transit,nextId:state.nextId}));
-    const b=document.getElementById('save-badge');if(b){b.classList.add('show');setTimeout(()=>b.classList.remove('show'),1500);}
-  },300);
-}
-function getDaySpots(i){return state.spots.filter(s=>s.day===i).sort((a,b)=>a.order-b.order)}
-function getTransitMins(fc,tc,key){if(state.transit[key]!==undefined)return state.transit[key];return(TRANSIT_DEF[fc]&&TRANSIT_DEF[fc][tc])?TRANSIT_DEF[fc][tc]:30}
-function transitKey(a,b){return`${a.id}->${b.id}`}
-function transitLabel(m){return m<60?`${m} min transit`:`${Math.floor(m/60)}h${m%60>0?' '+m%60+'min':''} transit`}
-function getDayTotal(i){const ss=getDaySpots(i);let h=ss.reduce((a,s)=>a+s.duration,0);for(let j=0;j<ss.length-1;j++)h+=getTransitMins(ss[j].city,ss[j+1].city,transitKey(ss[j],ss[j+1]))/60;return Math.round(h*10)/10}
-function typeLabel(t){return t==='booked'?'Pre-booked':t==='fixed'?'Fixed time':'Flexible'}
-function badgeClass(t){return t==='booked'?'badge-booked':t==='fixed'?'badge-fixed':'badge-flex'}
-function stars(r){const f=Math.floor(r),h=r-f>=0.5?1:0;return'★'.repeat(f)+'½'.repeat(h)+'☆'.repeat(5-f-h)}
-function gmapsUrl(name,lat,lng){return`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name+' Japan')}`}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
 
-function getFilteredSpots(){
-  return state.spots.filter(s=>{
-    if(state.mapFilter==='all')return true;
-    if(state.mapFilter==='scheduled')return s.day!==null;
-    if(state.mapFilter==='unscheduled')return s.day===null;
-    return s.city===state.mapFilter;
-  });
+// ── TABS ──
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='map')renderMap();
+  if(name==='spots')renderSpots();
 }
 
-function buildLeafletMap(spots,activeId){
-  const cityCenter={all:{lat:36.2,lng:137.5,zoom:5},tokyo:{lat:35.68,lng:139.75,zoom:12},kyoto:{lat:35.01,lng:135.76,zoom:12},hiroshima:{lat:34.39,lng:132.45,zoom:11},osaka:{lat:34.69,lng:135.50,zoom:12},scheduled:{lat:36.2,lng:137.5,zoom:5},unscheduled:{lat:36.2,lng:137.5,zoom:5}};
-  const c=cityCenter[state.mapFilter]||cityCenter.all;
-  const markers=spots.map(s=>{const d=SPOT_DATA[s.id];if(!d)return null;return{lat:d.lat,lng:d.lng,name:s.name,city:s.city,color:CITY_DOT[s.city]||'#888',id:s.id,day:s.day,active:s.id===activeId};}).filter(Boolean);
-  return`<!DOCTYPE html><html><head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"><\/script>
-  <style>
-  html,body,#map{margin:0;padding:0;height:100%;width:100%;font-family:'DM Sans',sans-serif}
-  .pin{width:32px;height:32px;border-radius:50%;border:2.5px solid white;box-shadow:0 2px 8px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;cursor:pointer}
-  .pin.active{width:40px;height:40px;border-width:3px;box-shadow:0 3px 14px rgba(0,0,0,.5);font-size:14px}
-  .leaflet-popup-content-wrapper{border-radius:12px;font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.15)}
-  .leaflet-popup-content{margin:10px 14px}
-  .pop-name{font-weight:600;font-size:13px;margin-bottom:2px}
-  .pop-day{font-size:11px;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px;color:white}
-  </style></head><body><div id="map"></div>
-  <script>
-  var map=L.map('map',{zoomControl:true,scrollWheelZoom:true}).setView([${c.lat},${c.lng}],${c.zoom});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM',maxZoom:19}).addTo(map);
-  var ms=${JSON.stringify(markers)};
-  var cityNames={tokyo:'Tokyo',kyoto:'Kyoto',hiroshima:'Hiroshima',osaka:'Osaka'};
-  ms.forEach(function(m){
-    var el=document.createElement('div');
-    el.className='pin'+(m.active?' active':'');
-    el.style.background=m.color;
-    el.textContent=m.name[0];
-    var icon=L.divIcon({className:'',html:el.outerHTML,iconSize:m.active?[40,40]:[32,32],iconAnchor:m.active?[20,40]:[16,32],popupAnchor:[0,m.active?-42:-34]});
-    var dayStr=m.day!==null?'Day '+(m.day+1):'Unscheduled';
-    L.marker([m.lat,m.lng],{icon:icon}).addTo(map)
-      .bindPopup('<div class="pop-name">'+m.name+'</div><div class="pop-city">'+cityNames[m.city]+'</div><div class="pop-day" style="background:'+m.color+'">'+dayStr+'</div>');
-    if(m.active){
-      setTimeout(function(){map.setView([m.lat,m.lng],13);},100);
-    }
-  });
-  <\/script></body></html>`;
+// ── ITINERARY ──
+function renderItinerary(){
+  const c=document.getElementById('panel-itinerary');
+  const renderSection=(days,label,cls)=>{
+    if(!days.length)return'';
+    let s='<div class="city-section"><div class="city-header '+cls+'"><div class="city-dot" style="background:var(--'+( cls==='transit'?'transit':cls)+')"></div><h2>'+label+'</h2></div>';
+    days.forEach(d=>{s+=renderDayCard(d);});
+    return s+'</div>';
+  };
+  let html='';
+  html+=renderSection(state.days.filter(d=>d.city==='tokyo'&&d.type!=='transit'),'Tokyo — May 21–30','tokyo');
+  html+=renderSection(state.days.filter(d=>d.id===10),'Transit to Osaka','transit');
+  html+=renderSection(state.days.filter(d=>d.id>=11&&d.id<=15),'Osaka — May 30–Jun 4  ·  Kyoto & Nara Day Trips','osaka');
+  html+=renderSection(state.days.filter(d=>d.id===16),'Departure — June 5','transit');
+  c.innerHTML=html;
 }
 
-function renderApp(){
-  const sched=state.spots.filter(s=>s.day!==null).length,total=state.spots.length;
-  document.getElementById('app').innerHTML=`
-    <div class="app-header">
-      <div><h1>Japan 2026</h1><div class="subtitle">May 16–29 · ${sched}/${total} spots scheduled</div></div>
-      <span class="save-badge" id="save-badge">Saved</span>
-    </div>
-    <div class="tab-content ${state.activeTab==='map'?'map-tab':''}" id="tab-content">
-      ${state.activeTab==='calendar'?`<div class="padded">${renderCalendar()}</div>`:state.activeTab==='map'?renderMapTab():`<div class="padded">${renderSpotsList()}</div>`}
-    </div>
-    <div class="bottom-nav">
-      <button class="nav-btn ${state.activeTab==='calendar'?'active':''}" onclick="A.setTab('calendar')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
-        <span>Calendar</span>
-      </button>
-      <button class="nav-btn ${state.activeTab==='map'?'active':''}" onclick="A.setTab('map')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
-        <span>Map</span>
-      </button>
-      <button class="nav-btn ${state.activeTab==='spots'?'active':''}" onclick="A.setTab('spots')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r="1.5"/><circle cx="3.5" cy="12" r="1.5"/><circle cx="3.5" cy="18" r="1.5"/></svg>
-        <span>All Spots</span>
-      </button>
-    </div>
-    ${state.modal?renderModal():''}
-    ${state.moveId!==null?renderMoveModal():''}
-    ${state.transitEdit?renderTransitModal():''}
-  `;
-  if(state.activeTab==='map')injectMap();
+function renderDayCard(d){
+  const tagHtml=(d.tags||[]).map(t=>'<span class="tag '+t+'">'+(t==='park'?'Theme park':t==='night'?'Nightlife':t==='shop'?'Shopping nearby':'Free')+'</span>').join('');
+  const shopLines=extractShopNotes(d);
+  const nightLines=extractNightNotes(d);
+  return '<div class="day-card" id="dc-'+d.id+'">'+
+    '<div class="day-header" onclick="toggleDay('+d.id+')">'+
+      '<div class="day-num '+d.type+'">D'+d.id+'</div>'+
+      '<div class="day-info">'+
+        '<div class="day-date">'+d.date+'</div>'+
+        '<div class="day-title">'+d.title+'</div>'+
+        '<div class="day-tags">'+tagHtml+'</div>'+
+      '</div>'+
+      '<span class="chevron">›</span>'+
+    '</div>'+
+    '<div class="day-detail">'+
+      '<div class="detail-grid">'+
+        '<div class="detail-col"><div class="detail-label">Morning</div><div class="detail-text">'+cleanText(d.morning)+'</div></div>'+
+        '<div class="detail-col"><div class="detail-label">Afternoon</div><div class="detail-text">'+cleanText(d.afternoon)+'</div></div>'+
+        '<div class="detail-col full"><div class="detail-label">Evening</div><div class="detail-text">'+cleanText(d.evening)+'</div></div>'+
+      '</div>'+
+      (shopLines?'<div class="shop-note">'+shopLines+'</div>':'')+
+      (nightLines?'<div class="night-note">'+nightLines+'</div>':'')+
+      '<div class="cost-badge">Est. cost: '+d.cost+'</div>'+
+      (d.notes?'<div style="margin-top:8px;font-size:12px;color:var(--muted);line-height:1.5;">'+d.notes+'</div>':'')+
+      renderLinkedSpots(d)+
+      '<button class="edit-btn" onclick="openEditDay('+d.id+')">✎ Edit this day</button>'+
+    '</div>'+
+  '</div>';
 }
 
-function renderMapTab(){
-  const filters=[{key:'all',label:'All'},{key:'tokyo',label:'Tokyo'},{key:'kyoto',label:'Kyoto'},{key:'hiroshima',label:'Hiroshima'},{key:'osaka',label:'Osaka'},{key:'scheduled',label:'✓ Scheduled'},{key:'unscheduled',label:'? Unscheduled'}];
-  const filterHtml=filters.map(f=>{
-    const isActive=state.mapFilter===f.key;
-    const bg=CITY_DOT[f.key]||'#1a1a1a';
-    return`<button class="filter-chip ${isActive?'active':''}" style="${isActive?`background:${bg};border-color:${bg}`:''}" onclick="A.setMapFilter('${f.key}')">
-      ${CITY_DOT[f.key]?`<div class="fc-dot" style="background:${isActive?'rgba(255,255,255,0.7)':CITY_DOT[f.key]}"></div>`:''}${f.label}
-    </button>`;
-  }).join('');
-
-  const filtered=getFilteredSpots();
-  const cardsHtml=filtered.map(s=>{
-    const d=SPOT_DATA[s.id];
-    const dayStr=s.day!==null?`Day ${s.day+1} · ${fmtDateShort(getDate(s.day))}`:'Unscheduled';
-    const isActive=state.activeSpotId===s.id;
-    const starsHtml=d?`<span class="msc-stars">${stars(d.rating)}</span><span>${d.rating} (${d.ratingCount})</span>`:'';
-    const imgHtml=d&&d.photo
-      ?`<img class="map-spot-card-img" src="${d.photo}" alt="${s.name}" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
-      :'';
-    const placeholderHtml=`<div class="map-spot-card-img-placeholder" ${d&&d.photo?'style="display:none"':''}>${CITY_EMOJI[s.city]||'📍'}</div>`;
-    return`<div class="map-spot-card ${isActive?'active':''}" id="card-${s.id}" onclick="A.focusSpot(${s.id})">
-      ${imgHtml}${placeholderHtml}
-      <div class="map-spot-card-body">
-        <div class="msc-name">${s.name}</div>
-        <div class="msc-city-row">
-          <div class="msc-dot" style="background:${CITY_DOT[s.city]}"></div>
-          <span class="msc-city">${CITY_LABEL[s.city]}</span>
-          <span class="msc-day" style="color:${CITY_DOT[s.city]}">${dayStr}</span>
-        </div>
-        ${d?`<div class="msc-rating">${starsHtml}</div>`:''}
-        ${s.note?`<div style="font-size:11px;color:var(--ink3);margin-top:1px">💬 ${s.note}</div>`:''}
-      </div>
-      <div class="map-spot-card-arrow">›</div>
-    </div>`;
-  }).join('');
-
-  return`<div class="map-tab-inner">
-    <div class="map-filter-bar">${filterHtml}</div>
-    <iframe id="map-iframe" src="about:blank" style="height:300px;width:100%;border:none;flex-shrink:0"></iframe>
-    <div class="map-spot-list" id="map-spot-list">${cardsHtml||'<div style="padding:20px;font-size:13px;color:var(--ink3);text-align:center">No spots match this filter</div>'}</div>
-  </div>`;
+function cleanText(txt){return(txt||'').replace(/🛍️ Nearby shopping \(optional\):.*$/gm,'').trim();}
+function extractShopNotes(d){
+  const all=[d.morning,d.afternoon,d.evening].join('\n');
+  const m=all.match(/🛍️ Nearby shopping \(optional\):([^\n]+)/g);
+  if(!m)return'';
+  return m.map(x=>x.replace('🛍️ Nearby shopping (optional):','').trim()).join('<br>');
+}
+function extractNightNotes(d){
+  if(!(d.tags||[]).includes('night'))return'';
+  return(d.evening||'').split('\n').filter(l=>l.includes('🌙')||l.includes('Muse')||l.includes('Womb')||l.includes('Roppongi')||l.includes('club')||l.includes('midnight')).join('<br>');
 }
 
-function injectMap(){
-  const filtered=getFilteredSpots();
-  const html=buildLeafletMap(filtered,state.activeSpotId);
-  const iframe=document.getElementById('map-iframe');
-  if(iframe)iframe.srcdoc=html;
-}
-
-function renderCalendar(){
-  const unsched=state.spots.filter(s=>s.day===null);
-  let h=`<div class="city-legend">`;
-  ['tokyo','kyoto','hiroshima','osaka'].forEach(c=>{h+=`<div class="legend-chip"><div class="legend-dot" style="background:${CITY_DOT[c]}"></div>${CITY_LABEL[c]}</div>`;});
-  h+=`</div>`;
-  for(let i=0;i<14;i++){
-    const cfg=DAYS_CONFIG[i],ss=getDaySpots(i),total=getDayTotal(i),pct=Math.min(100,Math.round((total/10)*100));
-    h+=`<div class="day-card"><div class="day-card-header">
-      <span class="day-num">${i+1}</span>
-      <div class="day-city-dot" style="background:${CITY_DOT[cfg.city]}"></div>
-      <span class="day-city-label" style="color:${CITY_DOT[cfg.city]}">${CITY_LABEL[cfg.city]}</span>
-      <span class="day-date">${fmtDateShort(getDate(i))}</span>
-      <button class="day-add-btn" onclick="A.openAdd('${cfg.city}',${i})">+</button>
-    </div><div class="day-card-body">`;
-    if(!ss.length){h+=`<div class="day-empty">No activities — tap + to add</div>`;}
-    else{ss.forEach((s,idx)=>{
-      const isLast=idx===ss.length-1,nextS=!isLast?ss[idx+1]:null,tk=nextS?transitKey(s,nextS):null,tkMins=nextS?getTransitMins(s.city,nextS.city,tk):0;
-      h+=`<div class="tl-item"><div class="tl-spine"><div class="tl-dot-outer" style="background:${CITY_DOT[s.city]}"></div>${!isLast?`<div class="tl-connector" style="background:${CITY_DOT[s.city]};opacity:.2"></div>`:''}</div>
-      <div class="tl-chip-area"><div class="activity-chip ${CHIP_CLASS[s.city]}" onclick="A.openMove(${s.id})">
-        <span class="chip-name">${s.name}</span><span class="chip-dur">${s.duration}h</span>
-        <div class="chip-actions">
-          <a class="chip-map-btn" href="${gmapsUrl(s.name,SPOT_DATA[s.id]?.lat||35.68,SPOT_DATA[s.id]?.lng||139.75)}" target="_blank" onclick="event.stopPropagation()">
-            <svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M8 1a5 5 0 100 10A5 5 0 008 1z" stroke="currentColor" stroke-width="1.5"/><path d="M8 11v4M6 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Map
-          </a>
-          <button class="chip-remove" onclick="event.stopPropagation();A.removeFromDay(${s.id})">×</button>
-        </div>
-      </div></div></div>`;
-      if(!isLast&&nextS){h+=`<div class="transit-row"><div class="transit-spine"><div class="transit-line"></div></div><div style="display:flex;align-items:center;padding:2px 0"><button class="transit-btn" onclick="A.openTransitEdit('${tk}',${tkMins})">${transitLabel(tkMins)}</button></div></div>`;}
-    });}
-    h+=`<div class="hours-row"><div class="hours-track"><div class="hours-fill" style="width:${pct}%"></div></div><span class="hours-text">${total}h incl. transit</span></div></div></div>`;
+function renderLinkedSpots(d){
+  const matched=state.spots.filter(s=>s.dayId===d.id);
+  if(matched.length===0){
+    return '<div class="linked-spots"><div class="linked-spots-label">Linked spots (0)</div><div class="linked-spots-empty">Drag spots here from the Spots tab</div></div>';
   }
-  h+=`<div style="margin-top:6px"><div class="section-title">Unscheduled <span class="count-badge">${unsched.length}</span></div>`;
-  if(!unsched.length){h+=`<p style="font-size:13px;color:var(--ink3);font-style:italic">All spots are scheduled!</p>`;}
-  else{unsched.forEach(s=>{h+=`<div class="unsched-item">
-    <div class="unsched-dot" style="background:${CITY_DOT[s.city]}"></div>
-    <span class="unsched-name">${s.name}</span><span class="unsched-dur">${s.duration}h</span>
-    <span class="unsched-badge ${badgeClass(s.type)}">${typeLabel(s.type)}</span>
-    <button class="assign-btn" onclick="A.openMove(${s.id})">Assign</button>
-  </div>`;});}
-  h+=`</div>`;return h;
+  const items=matched.map(s=>{
+    const notesHtml=s.notes?'<div class="linked-spot-notes">'+s.notes+'</div>':'';
+    const ratingHtml=s.rating?'<span class="linked-spot-rating">★ '+s.rating+'</span>':'';
+    const mapsHtml=s.url?'<a href="'+s.url+'" target="_blank" class="linked-spot-maps">Maps →</a>':'';
+    return '<div class="linked-spot-item">'+
+      '<div class="linked-spot-dot '+s.city+'"></div>'+
+      '<div class="linked-spot-body">'+
+        '<div class="linked-spot-name">'+s.name+'</div>'+
+        '<div class="linked-spot-meta">'+(s.duration?'⏱ '+s.duration:'')+'</div>'+
+        notesHtml+
+      '</div>'+
+      '<div class="linked-spot-right">'+ratingHtml+mapsHtml+'</div>'+
+    '</div>';
+  }).join('');
+  return '<div class="linked-spots"><div class="linked-spots-label">Linked spots ('+matched.length+')</div>'+items+'</div>';
 }
 
-function renderSpotsList(){
-  let h=`<button class="add-spot-btn" onclick="A.openAdd()">+ Add new spot</button>`;
-  ['tokyo','kyoto','hiroshima','osaka'].forEach(city=>{
-    const cs=state.spots.filter(s=>s.city===city);if(!cs.length)return;
-    h+=`<div class="spots-city-group"><div class="spots-city-title"><div class="legend-dot" style="background:${CITY_DOT[city]}"></div>${CITY_LABEL[city]}</div>`;
-    cs.forEach(s=>{
-      const dayStr=s.day!==null?`Day ${s.day+1} · ${fmtDateShort(getDate(s.day))}`:'Unscheduled';
-      h+=`<div class="spot-list-item"><div class="spot-list-dot" style="background:${CITY_DOT[s.city]}"></div>
-        <div class="spot-list-info"><div class="spot-list-name">${s.name}</div><div class="spot-list-sub">${dayStr}${s.note?' · '+s.note:''}</div></div>
-        <div class="spot-list-right">
-          <span class="unsched-badge ${badgeClass(s.type)}" style="font-size:10px">${typeLabel(s.type)}</span>
-          <button class="edit-btn" onclick="A.openEdit(${s.id})">Edit</button>
-        </div>
-      </div>`;
-    });
-    h+=`</div>`;
-  });return h;
+function refreshLinkedSpots(){
+  state.days.forEach(function(d){
+    var card=document.getElementById('dc-'+d.id);
+    if(!card)return;
+    var ex=card.querySelector('.linked-spots');
+    if(ex)ex.outerHTML=renderLinkedSpots(d);
+  });
 }
 
-function renderModal(){
-  const f=state.form,isEdit=state.modal.mode==='edit';
-  return`<div class="modal-overlay" onclick="A.closeModal()"><div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><span class="modal-title">${isEdit?'Edit spot':'Add spot'}</span><button class="modal-close" onclick="A.closeModal()">×</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label class="form-label">Activity name</label><input class="form-input" id="f-name" value="${f.name||''}" oninput="A.setForm('name',this.value)" placeholder="e.g. Shibuya Crossing" autocomplete="off"/></div>
-      <div class="form-row-2">
-        <div class="form-group"><label class="form-label">City</label><select class="form-select" onchange="A.setForm('city',this.value)"><option value="tokyo" ${f.city==='tokyo'?'selected':''}>Tokyo</option><option value="kyoto" ${f.city==='kyoto'?'selected':''}>Kyoto</option><option value="hiroshima" ${f.city==='hiroshima'?'selected':''}>Hiroshima</option><option value="osaka" ${f.city==='osaka'?'selected':''}>Osaka</option></select></div>
-        <div class="form-group"><label class="form-label">Duration (hrs)</label><input class="form-input" type="number" min=".5" max="12" step=".5" value="${f.duration||2}" oninput="A.setForm('duration',+this.value)"/></div>
-      </div>
-      <div class="form-group"><label class="form-label">Type</label><select class="form-select" onchange="A.setForm('type',this.value)"><option value="flex" ${f.type==='flex'?'selected':''}>Flexible</option><option value="booked" ${f.type==='booked'?'selected':''}>Pre-booked</option><option value="fixed" ${f.type==='fixed'?'selected':''}>Fixed time</option></select></div>
-      <div class="form-group"><label class="form-label">Notes</label><input class="form-input" value="${f.note||''}" oninput="A.setForm('note',this.value)" placeholder="Optional reminder or tip"/></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="A.closeModal()">Cancel</button>
-      ${isEdit?`<button class="btn-danger" onclick="A.deleteSpot(${state.modal.id})">Delete</button>`:''}
-      <button class="btn-primary" onclick="A.saveSpot()">Save</button>
-    </div>
-  </div></div>`;
+function toggleDay(id){document.getElementById('dc-'+id).classList.toggle('open');}
+
+// ── EDIT DAY ──
+let editingDayId=null;
+function openEditDay(id){
+  editingDayId=id;
+  const d=state.days.find(x=>x.id===id);
+  document.getElementById('editModalTitle').textContent='Edit Day '+id+' — '+d.date;
+  document.getElementById('editDate').value=d.date;
+  document.getElementById('editMorning').value=d.morning||'';
+  document.getElementById('editAfternoon').value=d.afternoon||'';
+  document.getElementById('editEvening').value=d.evening||'';
+  document.getElementById('editCost').value=d.cost||'';
+  document.getElementById('editNotes').value=d.notes||'';
+  document.getElementById('editModal').classList.add('open');
+}
+function closeModal(){document.getElementById('editModal').classList.remove('open');editingDayId=null;}
+function saveDay(){
+  const d=state.days.find(x=>x.id===editingDayId);
+  d.date=document.getElementById('editDate').value;
+  d.morning=document.getElementById('editMorning').value;
+  d.afternoon=document.getElementById('editAfternoon').value;
+  d.evening=document.getElementById('editEvening').value;
+  d.cost=document.getElementById('editCost').value;
+  d.notes=document.getElementById('editNotes').value;
+  saveState();closeModal();renderItinerary();
 }
 
-function renderMoveModal(){
-  const s=state.spots.find(s=>s.id===state.moveId);if(!s)return'';
-  let h=`<div class="modal-overlay" onclick="A.closeModal()"><div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><span class="modal-title">Move "${s.name}"</span><button class="modal-close" onclick="A.closeModal()">×</button></div>
-    <div><div class="move-day-item" onclick="A.moveToDay(null)"><span class="move-day-name" style="color:var(--ink3)">Unscheduled</span><span class="move-day-meta">Remove from schedule</span></div>`;
-  for(let i=0;i<14;i++){const cfg=DAYS_CONFIG[i],hrs=getDayTotal(i);h+=`<div class="move-day-item" onclick="A.moveToDay(${i})"><div class="legend-dot" style="background:${CITY_DOT[cfg.city]};flex-shrink:0"></div><span class="move-day-name">Day ${i+1} — ${CITY_LABEL[cfg.city]}</span><span class="move-day-meta">${fmtDateShort(getDate(i))} · ${hrs}h</span></div>`;}
-  h+=`</div><div class="modal-actions"><button class="btn-secondary" onclick="A.closeModal()">Cancel</button><button class="btn-secondary" onclick="A.openEdit(${s.id})">Edit</button></div></div></div>`;
-  return h;
+// ── MAP ──
+let activeMapCity='all';
+function renderMap(){
+  const chips=document.querySelectorAll('#mapFilters .filter-chip');
+  chips.forEach(c=>{
+    c.onclick=()=>{
+      chips.forEach(x=>x.classList.remove('active'));
+      c.classList.add('active');
+      activeMapCity=c.dataset.city;
+      const lat=c.dataset.lat,lng=c.dataset.lng,zoom=c.dataset.zoom;
+      const bbox=getBbox(parseFloat(lat),parseFloat(lng),parseInt(zoom));
+      document.getElementById('osmFrame').src=
+        'https://www.openstreetmap.org/export/embed.html?bbox='+bbox+'&layer=mapnik&marker='+lat+'%2C'+lng;
+      renderMapSpots();
+    };
+  });
+  renderCitySummary();
+  renderMapSpots();
+}
+function getBbox(lat,lng,zoom){
+  const d=zoom<=7?8:zoom<=10?1.5:0.15;
+  return [(lng-d).toFixed(4),'%2C',(lat-d*0.7).toFixed(4),'%2C',(lng+d).toFixed(4),'%2C',(lat+d*0.7).toFixed(4)].join('');
+}
+function renderCitySummary(){
+  const cities=[
+    {key:'tokyo',label:'Tokyo',color:'#2563EB',bg:'#EFF6FF',days:'Days 1–10'},
+    {key:'osaka',label:'Osaka',color:'#059669',bg:'#ECFDF5',days:'Days 11–16'},
+    {key:'kyoto',label:'Kyoto',color:'#059669',bg:'#ECFDF5',days:'Day trip'},
+    {key:'nara',label:'Nara',color:'#059669',bg:'#ECFDF5',days:'Day trip'},
+  ];
+  const el=document.getElementById('citySummaryCards');
+  if(!el)return;
+  el.innerHTML=cities.map(c=>{
+    const count=state.spots.filter(s=>s.city===c.key).length;
+    return '<div class="city-card" style="background:'+c.bg+';border-color:'+c.color+';">'+
+      '<div style="font-size:13px;font-weight:600;color:'+c.color+';">'+c.label+'</div>'+
+      '<div style="font-size:20px;font-weight:600;color:'+c.color+';margin:2px 0;">'+count+'</div>'+
+      '<div style="font-size:10px;color:'+c.color+';opacity:.7;">'+c.days+'</div>'+
+    '</div>';
+  }).join('');
+}
+function renderMapSpots(){
+  const filtered=activeMapCity==='all'?state.spots:state.spots.filter(s=>s.city===activeMapCity);
+  document.getElementById('mapSpotsCount').textContent=filtered.length+' spots';
+  const mapsUrl='https://www.google.com/maps/search/'+encodeURIComponent(filtered.slice(0,10).map(s=>s.name+' Japan').join('/'));
+  document.getElementById('openAllInMaps').href=mapsUrl;
+  document.getElementById('mapSpotsList').innerHTML=filtered.map(s=>{
+    const d=state.days.find(x=>x.id===s.dayId);
+    const dayLabel=d?'Day '+d.id+' · '+d.date:'Unassigned';
+    return '<div class="spot-row">'+
+      '<div class="spot-dot '+s.city+'"></div>'+
+      '<div class="spot-info">'+
+        '<div class="spot-name">'+s.name+'</div>'+
+        '<div class="spot-meta">'+s.city.charAt(0).toUpperCase()+s.city.slice(1)+' · '+dayLabel+(s.duration?' · '+s.duration:'')+'</div>'+
+        (s.notes?'<div class="spot-meta" style="font-style:italic;margin-top:2px;">'+s.notes+'</div>':'')+
+        (s.url?'<a class="gmaps-link" href="'+s.url+'" target="_blank">Open in Google Maps →</a>':'')+
+      '</div>'+
+      (s.rating?'<div class="spot-rating">★ '+s.rating+'</div>':'')+
+    '</div>';
+  }).join('');
 }
 
-function renderTransitModal(){
-  const{key,val}=state.transitEdit;
-  return`<div class="modal-overlay" onclick="A.closeModal()"><div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><span class="modal-title">Edit transit time</span><button class="modal-close" onclick="A.closeModal()">×</button></div>
-    <div class="modal-body">
-      <p class="transit-hint">Typical Tokyo subway: 15–45 min. Shinkansen inter-city: 60–200 min.</p>
-      <div class="transit-presets">${[10,20,30,45,60,90,120].map(p=>`<button class="preset-btn" onclick="A.setTransitVal(${p})">${transitLabel(p)}</button>`).join('')}</div>
-      <div class="form-group"><label class="form-label">Custom (minutes)</label><input class="form-input" type="number" min="5" max="300" step="5" id="t-val" value="${val}" oninput="A.setTransitVal(+this.value)"/></div>
-    </div>
-    <div class="modal-actions"><button class="btn-secondary" onclick="A.closeModal()">Cancel</button><button class="btn-primary" onclick="A.saveTransit()">Save</button></div>
-  </div></div>`;
+// ── SPOTS DRAG BOARD ──
+function renderSpots(){
+  const q=(document.getElementById('spotSearch')&&document.getElementById('spotSearch').value||'').toLowerCase();
+  const board=document.getElementById('spotsBoard');
+
+  const unassigned=state.spots.filter(s=>!s.dayId&&(!q||s.name.toLowerCase().includes(q)));
+  let html='<div class="unassigned-section">'+
+    '<div class="unassigned-label">Unassigned spots</div>'+
+    '<div class="unassigned-pool" id="bucket-null" ondragover="onDragOver(event,null)" ondrop="onDrop(event,null)" ondragleave="onDragLeave(event)">'+
+    (unassigned.length?unassigned.map(s=>chipHtml(s)).join(''):'<span class="empty-bucket">All spots assigned</span>')+
+    '</div></div>';
+
+  state.days.forEach(d=>{
+    const daySpots=state.spots.filter(s=>s.dayId===d.id&&(!q||s.name.toLowerCase().includes(q)||('day '+d.id).includes(q)));
+    const dropCls='bucket-drop'+(d.city==='osaka'||d.type==='osaka'?' osaka-drop':'');
+    html+='<div class="day-bucket">'+
+      '<div class="day-bucket-header">'+
+        '<div class="day-bucket-num '+d.type+'">D'+d.id+'</div>'+
+        '<div class="day-bucket-title">'+d.title+'</div>'+
+        '<div class="day-bucket-date">'+d.date+'</div>'+
+      '</div>'+
+      '<div class="'+dropCls+'" id="bucket-'+d.id+'" ondragover="onDragOver(event,'+d.id+')" ondrop="onDrop(event,'+d.id+')" ondragleave="onDragLeave(event)">'+
+      (daySpots.length?daySpots.map(s=>chipHtml(s)).join(''):'<span class="empty-bucket">Drop spots here</span>')+
+      '</div>'+
+    '</div>';
+  });
+  board.innerHTML=html;
+  initTouchDrag();
 }
 
-const A={
-  setTab(t){state.activeTab=t;state.activeSpotId=null;renderApp()},
-  setForm(k,v){state.form[k]=v},
-  setTransitVal(v){if(state.transitEdit){state.transitEdit.val=v;const el=document.getElementById('t-val');if(el)el.value=v;}},
-  setMapFilter(f){state.mapFilter=f;state.activeSpotId=null;renderApp()},
-  focusSpot(id){
-    state.activeSpotId=id;
-    // re-inject map with new active spot, scroll card into view
-    const filtered=getFilteredSpots();
-    const html=buildLeafletMap(filtered,id);
-    const iframe=document.getElementById('map-iframe');
-    if(iframe)iframe.srcdoc=html;
-    // highlight card
-    document.querySelectorAll('.map-spot-card').forEach(el=>{el.classList.remove('active');});
-    const card=document.getElementById('card-'+id);
-    if(card){card.classList.add('active');card.scrollIntoView({behavior:'smooth',block:'nearest'});}
-  },
-  openAdd(city,day){
-    state.form={name:'',city:city||'tokyo',duration:2,type:'flex',note:''};
-    state.modal={mode:'add',prefillDay:day??null};renderApp();
-    setTimeout(()=>{const el=document.getElementById('f-name');if(el)el.focus()},100);
-  },
-  openEdit(id){const s=state.spots.find(s=>s.id===id);if(!s)return;state.form={name:s.name,city:s.city,duration:s.duration,type:s.type,note:s.note||''};state.modal={mode:'edit',id};state.moveId=null;renderApp();},
-  openMove(id){state.moveId=id;state.modal=null;renderApp()},
-  openTransitEdit(key,val){state.transitEdit={key,val};renderApp()},
-  saveSpot(){
-    const f=state.form;if(!f.name||!f.name.trim())return;
-    if(state.modal.mode==='edit'){const s=state.spots.find(s=>s.id===state.modal.id);Object.assign(s,{name:f.name.trim(),city:f.city,duration:+f.duration,type:f.type,note:f.note});}
-    else{const ord=state.modal.prefillDay!==null?getDaySpots(state.modal.prefillDay).length:0;state.spots.push({id:state.nextId++,name:f.name.trim(),city:f.city,duration:+f.duration,type:f.type,note:f.note,day:state.modal.prefillDay,order:ord});}
-    state.modal=null;saveState();renderApp();
-  },
-  deleteSpot(id){state.spots=state.spots.filter(s=>s.id!==id);state.modal=null;saveState();renderApp()},
-  removeFromDay(id){const s=state.spots.find(s=>s.id===id);if(s)s.day=null;saveState();renderApp()},
-  moveToDay(dayIdx){const s=state.spots.find(s=>s.id===state.moveId);if(s){s.day=dayIdx;if(dayIdx!==null)s.order=getDaySpots(dayIdx).length;}state.moveId=null;saveState();renderApp()},
-  saveTransit(){if(state.transitEdit){state.transit[state.transitEdit.key]=+state.transitEdit.val;state.transitEdit=null;saveState();renderApp();}},
-  closeModal(){state.modal=null;state.moveId=null;state.transitEdit=null;renderApp()}
-};
+function chipHtml(s){
+  const cityClass=s.city==='osaka'||s.city==='kyoto'||s.city==='nara'?'osaka':s.city;
+  return '<div class="spot-chip '+cityClass+'" id="chip-'+s.id+'" draggable="true" '+
+    'ondragstart="onDragStart(event,\''+s.id+'\')" ondragend="onDragEnd(event)">'+
+    s.name+
+    (s.rating?'<span class="spot-chip-rating">★'+s.rating+'</span>':'')+
+    '<span class="spot-chip-actions">'+
+      '<button class="chip-edit-btn" onclick="event.stopPropagation();openEditSpot(\''+s.id+'\')">✎</button>'+
+      '<button class="chip-edit-btn" onclick="event.stopPropagation();deleteSpot(\''+s.id+'\')">✕</button>'+
+    '</span>'+
+  '</div>';
+}
 
-loadState();renderApp();
+// ── MOUSE DRAG ──
+let draggingId=null;
+function onDragStart(e,id){
+  draggingId=id;
+  e.dataTransfer.effectAllowed='move';
+  setTimeout(()=>{const el=document.getElementById('chip-'+id);if(el)el.classList.add('dragging');},0);
+}
+function onDragEnd(e){
+  if(draggingId){const el=document.getElementById('chip-'+draggingId);if(el)el.classList.remove('dragging');}
+  draggingId=null;
+  document.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'));
+}
+function onDragOver(e,dayId){e.preventDefault();e.currentTarget.classList.add('drag-over');}
+function onDragLeave(e){e.currentTarget.classList.remove('drag-over');}
+function onDrop(e,dayId){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(!draggingId)return;
+  assignSpot(draggingId,dayId);
+}
+
+// ── TOUCH DRAG (iPhone) ──
+function initTouchDrag(){
+  document.querySelectorAll('.spot-chip').forEach(chip=>{
+    chip.addEventListener('touchstart',touchStart,{passive:false});
+    chip.addEventListener('touchmove',touchMove,{passive:false});
+    chip.addEventListener('touchend',touchEnd,{passive:false});
+  });
+}
+
+let touchSpotId=null,ghost=null,lastTarget=null;
+function touchStart(e){
+  const chip=e.currentTarget;
+  touchSpotId=chip.id.replace('chip-','');
+  const rect=chip.getBoundingClientRect();
+  ghost=document.getElementById('dragGhost');
+  ghost.innerHTML=chip.outerHTML;
+  ghost.style.display='block';
+  ghost.style.width=rect.width+'px';
+  ghost.style.left=rect.left+'px';
+  ghost.style.top=rect.top+'px';
+  ghost.style.pointerEvents='none';
+  chip.classList.add('dragging');
+  e.preventDefault();
+}
+function touchMove(e){
+  if(!touchSpotId)return;
+  e.preventDefault();
+  const t=e.touches[0];
+  ghost.style.left=(t.clientX-40)+'px';
+  ghost.style.top=(t.clientY-20)+'px';
+  ghost.style.display='block';
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  const bucket=el&&(el.classList.contains('bucket-drop')||el.classList.contains('unassigned-pool'))?el:el&&el.closest('.bucket-drop, .unassigned-pool');
+  if(lastTarget&&lastTarget!==bucket)lastTarget.classList.remove('drag-over');
+  if(bucket){bucket.classList.add('drag-over');lastTarget=bucket;}
+}
+function touchEnd(e){
+  if(!touchSpotId)return;
+  const t=e.changedTouches[0];
+  ghost.style.display='none';
+  document.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'));
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  const bucket=el&&(el.classList.contains('bucket-drop')||el.classList.contains('unassigned-pool'))?el:el&&el.closest('.bucket-drop,.unassigned-pool');
+  if(bucket){
+    const bid=bucket.id.replace('bucket-','');
+    assignSpot(touchSpotId,bid==='null'?null:parseInt(bid));
+  }
+  const chip=document.getElementById('chip-'+touchSpotId);
+  if(chip)chip.classList.remove('dragging');
+  touchSpotId=null;lastTarget=null;
+}
+
+function assignSpot(spotId,dayId){
+  const s=state.spots.find(x=>x.id===spotId);
+  if(!s)return;
+  s.dayId=dayId||null;
+  saveState();
+  renderSpots();
+  refreshLinkedSpots();
+  if(document.getElementById('panel-map').classList.contains('active'))renderMapSpots();
+}
+
+// ── ADD / EDIT SPOT ──
+let editingSpotId=null;
+function openAddSpot(){
+  editingSpotId=null;
+  document.getElementById('spotModalTitle').textContent='Add spot';
+  ['sName','sDuration','sRating','sUrl','sNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sCity').value='tokyo';
+  document.getElementById('spotModal').classList.add('open');
+}
+function openEditSpot(id){
+  editingSpotId=id;
+  const s=state.spots.find(x=>x.id===id);
+  document.getElementById('spotModalTitle').textContent='Edit spot';
+  document.getElementById('sName').value=s.name||'';
+  document.getElementById('sCity').value=s.city||'tokyo';
+  document.getElementById('sDuration').value=s.duration||'';
+  document.getElementById('sRating').value=s.rating||'';
+  document.getElementById('sUrl').value=s.url||'';
+  document.getElementById('sNotes').value=s.notes||'';
+  document.getElementById('spotModal').classList.add('open');
+}
+function closeSpotModal(){document.getElementById('spotModal').classList.remove('open');editingSpotId=null;}
+function saveSpot(){
+  const data={
+    name:document.getElementById('sName').value,
+    city:document.getElementById('sCity').value,
+    duration:document.getElementById('sDuration').value,
+    rating:parseFloat(document.getElementById('sRating').value)||null,
+    url:document.getElementById('sUrl').value,
+    notes:document.getElementById('sNotes').value,
+  };
+  if(!data.name.trim())return;
+  if(editingSpotId){
+    const s=state.spots.find(x=>x.id===editingSpotId);
+    Object.assign(s,data);
+  }else{
+    data.id='s'+Date.now();
+    data.dayId=null;
+    state.spots.push(data);
+  }
+  saveState();closeSpotModal();renderSpots();refreshLinkedSpots();
+  if(document.getElementById('panel-map').classList.contains('active'))renderMapSpots();
+}
+function deleteSpot(id){
+  if(!confirm('Delete this spot?'))return;
+  state.spots=state.spots.filter(s=>s.id!==id);
+  saveState();renderSpots();refreshLinkedSpots();
+}
+
+renderItinerary();
 </script>
 </body>
 </html>
