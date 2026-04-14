@@ -78,6 +78,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink)
 .detail-link{font-size:13px;color:var(--tokyo);text-decoration:none;}
 .detail-actions{display:flex;gap:8px;margin-top:10px;}
 .day-select{width:100%;margin-top:6px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);outline:none;}
+.save-day-btn{margin-top:8px;width:100%;padding:9px;background:var(--ink);color:white;border:none;border-radius:8px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;}
+.save-day-btn:active{opacity:.8;}
 .detail-btn{padding:7px 14px;border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;}
 .detail-btn.edit{background:var(--surface);border:1px solid var(--border);color:var(--ink2);}
 .detail-btn.delete{background:var(--red-light);border:1px solid var(--red-mid);color:var(--red);}
@@ -261,11 +263,12 @@ function spotRowHtml(s, d) {
     (s.duration ? '<div class="detail-row"><div class="detail-icon">⏱</div><div class="detail-value"><strong>Duration:</strong> ' + s.duration + '</div></div>' : '') +
     '<div class="detail-row"><div class="detail-icon">🏙</div><div class="detail-value"><strong>City:</strong> ' + s.city.charAt(0).toUpperCase() + s.city.slice(1) + '</div></div>' +
     '<div class="detail-row"><div class="detail-icon">📅</div><div class="detail-value">' +
-      '<strong>Move to day:</strong><br>' +
-      '<select class="day-select" onchange="assignFromSelect(this,\"' + s.id + '\")" onclick="event.stopPropagation()">' +
+      '<strong>Assign to day:</strong><br>' +
+      '<select class="day-select" id="sel-' + s.id + '" onclick="event.stopPropagation()">' +
         '<option value="">— Unassigned —</option>' +
         DAYS.map(function(d){ return '<option value="' + d.id + '"' + (s.dayId===d.id?' selected':'') + '>' + d.date + ' — ' + d.dow + ' (Day ' + d.id + ')</option>'; }).join('') +
       '</select>' +
+      '<button class="save-day-btn" onclick="event.stopPropagation();saveAssign(this)" data-sid="' + s.id + '">Save date</button>' +
     '</div></div>' +
     (s.notes ? '<div class="detail-row"><div class="detail-icon">📝</div><div class="detail-value">' + s.notes + '</div></div>' : '') +
     (s.url ? '<div class="detail-row"><div class="detail-icon">📍</div><div class="detail-value"><a href="' + s.url + '" target="_blank" class="detail-link">Open in Google Maps →</a></div></div>' : '') +
@@ -441,7 +444,10 @@ function cancelDelete(){
   document.getElementById('deleteConfirm').classList.remove('open');
 }
 
-function assignFromSelect(sel, spotId){
+function saveAssign(btn){
+  const spotId = btn.getAttribute('data-sid');
+  const sel = document.getElementById('sel-' + spotId);
+  if(!sel) return;
   const val = sel.value;
   assign(spotId, val === '' ? null : parseInt(val));
 }
