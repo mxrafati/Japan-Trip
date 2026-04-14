@@ -77,6 +77,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink)
 .detail-value{font-size:13px;color:var(--ink2);line-height:1.5;flex:1;}
 .detail-link{font-size:13px;color:var(--tokyo);text-decoration:none;}
 .detail-actions{display:flex;gap:8px;margin-top:10px;}
+.day-select{width:100%;margin-top:6px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);outline:none;}
 .detail-btn{padding:7px 14px;border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;}
 .detail-btn.edit{background:var(--surface);border:1px solid var(--border);color:var(--ink2);}
 .detail-btn.delete{background:var(--red-light);border:1px solid var(--red-mid);color:var(--red);}
@@ -132,6 +133,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink)
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
       <button class="btn-save" onclick="saveSpot()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteConfirm">
+  <div class="modal" style="max-height:auto;">
+    <h3>Delete spot?</h3>
+    <p style="font-size:14px;color:var(--ink2);margin-top:8px;line-height:1.5;">This spot will be permanently removed from your trip.</p>
+    <div class="modal-btns" style="margin-top:20px;">
+      <button class="btn-cancel" onclick="cancelDelete()">Cancel</button>
+      <button class="btn-save" style="background:var(--red);" onclick="confirmDelete()">Delete</button>
     </div>
   </div>
 </div>
@@ -248,11 +260,18 @@ function spotRowHtml(s, d) {
     '<div class="detail-row"><div class="detail-icon">📅</div><div class="detail-value"><strong>Date:</strong> ' + dayLabel + '</div></div>' +
     (s.duration ? '<div class="detail-row"><div class="detail-icon">⏱</div><div class="detail-value"><strong>Duration:</strong> ' + s.duration + '</div></div>' : '') +
     '<div class="detail-row"><div class="detail-icon">🏙</div><div class="detail-value"><strong>City:</strong> ' + s.city.charAt(0).toUpperCase() + s.city.slice(1) + '</div></div>' +
+    '<div class="detail-row"><div class="detail-icon">📅</div><div class="detail-value">' +
+      '<strong>Move to day:</strong><br>' +
+      '<select class="day-select" onchange="assignFromSelect(this,\"' + s.id + '\")" onclick="event.stopPropagation()">' +
+        '<option value="">— Unassigned —</option>' +
+        DAYS.map(function(d){ return '<option value="' + d.id + '"' + (s.dayId===d.id?' selected':'') + '>' + d.date + ' — ' + d.dow + ' (Day ' + d.id + ')</option>'; }).join('') +
+      '</select>' +
+    '</div></div>' +
     (s.notes ? '<div class="detail-row"><div class="detail-icon">📝</div><div class="detail-value">' + s.notes + '</div></div>' : '') +
     (s.url ? '<div class="detail-row"><div class="detail-icon">📍</div><div class="detail-value"><a href="' + s.url + '" target="_blank" class="detail-link">Open in Google Maps →</a></div></div>' : '') +
     '<div class="detail-actions">' +
-      '<button class="detail-btn edit" onclick="openEditSpot(\'' + s.id + '\')">✎ Edit</button>' +
-      '<button class="detail-btn delete" onclick="deleteSpot(\'' + s.id + '\')">Delete</button>' +
+      '<button class="detail-btn edit" onclick="event.stopPropagation();openEditSpot(\'' + s.id + '\')">✎ Edit</button>' +
+      '<button class="detail-btn delete" onclick="event.stopPropagation();deleteSpot(\'' + s.id + '\')">Delete</button>' +
     '</div>' +
   '</div>' : '<div class="spot-detail" id="detail-' + s.id + '"></div>';
 
@@ -404,10 +423,27 @@ function saveSpot(){
   save(); closeModal(); render();
 }
 function deleteSpot(id){
-  if(!confirm('Delete this spot?')) return;
-  spots = spots.filter(s => s.id !== id);
-  if(openDetailId === id) openDetailId = null;
-  save(); render();
+  pendingDeleteId = id;
+  document.getElementById('deleteConfirm').classList.add('open');
+}
+let pendingDeleteId = null;
+function confirmDelete(){
+  if(pendingDeleteId){
+    spots = spots.filter(s => s.id !== pendingDeleteId);
+    if(openDetailId === pendingDeleteId) openDetailId = null;
+    pendingDeleteId = null;
+    save(); render();
+  }
+  document.getElementById('deleteConfirm').classList.remove('open');
+}
+function cancelDelete(){
+  pendingDeleteId = null;
+  document.getElementById('deleteConfirm').classList.remove('open');
+}
+
+function assignFromSelect(sel, spotId){
+  const val = sel.value;
+  assign(spotId, val === '' ? null : parseInt(val));
 }
 
 render();
