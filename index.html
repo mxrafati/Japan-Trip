@@ -160,13 +160,12 @@ const GIST_FILE = 'japan_trip.json';
 let syncStatus = 'idle'; // idle | saving | saved | error
 
 async function loadFromGist() {
-  setSyncStatus('saving');
   try {
-    const res = await fetch('https://api.github.com/gists/' + GIST_ID + '?t=' + Date.now(), {
-      headers: { 'Authorization': 'token ' + GIST_TOKEN, 'Cache-Control': 'no-cache' }
-    });
+    // Read publicly — no auth header needed, avoids CORS issues on Safari
+    const res = await fetch('https://api.github.com/gists/' + GIST_ID + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const raw = data.files[GIST_FILE] && data.files[GIST_FILE].content;
+    const raw = data.files && data.files[GIST_FILE] && data.files[GIST_FILE].content;
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
@@ -174,9 +173,7 @@ async function loadFromGist() {
         localStorage.setItem(SK, JSON.stringify(spots));
       }
     }
-    setSyncStatus('idle');
   } catch(e) {
-    setSyncStatus('error');
     console.warn('Gist load failed, using local data', e);
   }
 }
@@ -184,20 +181,23 @@ async function loadFromGist() {
 async function saveToGist() {
   setSyncStatus('saving');
   try {
-    await fetch('https://api.github.com/gists/' + GIST_ID, {
+    const res = await fetch('https://api.github.com/gists/' + GIST_ID, {
       method: 'PATCH',
       headers: {
         'Authorization': 'token ' + GIST_TOKEN,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
       },
       body: JSON.stringify({
         files: { [GIST_FILE]: { content: JSON.stringify(spots) } }
       })
     });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     setSyncStatus('saved');
   } catch(e) {
     setSyncStatus('error');
-    console.warn('Gist save failed', e);
+    console.warn('Gist save failed:', e);
   }
 }
 
