@@ -160,9 +160,10 @@ const GIST_FILE = 'japan_trip.json';
 let syncStatus = 'idle'; // idle | saving | saved | error
 
 async function loadFromGist() {
+  setSyncStatus('saving');
   try {
-    const res = await fetch('https://api.github.com/gists/' + GIST_ID, {
-      headers: { 'Authorization': 'token ' + GIST_TOKEN }
+    const res = await fetch('https://api.github.com/gists/' + GIST_ID + '?t=' + Date.now(), {
+      headers: { 'Authorization': 'token ' + GIST_TOKEN, 'Cache-Control': 'no-cache' }
     });
     const data = await res.json();
     const raw = data.files[GIST_FILE] && data.files[GIST_FILE].content;
@@ -173,7 +174,11 @@ async function loadFromGist() {
         localStorage.setItem(SK, JSON.stringify(spots));
       }
     }
-  } catch(e) { console.warn('Gist load failed, using local data', e); }
+    setSyncStatus('idle');
+  } catch(e) {
+    setSyncStatus('error');
+    console.warn('Gist load failed, using local data', e);
+  }
 }
 
 async function saveToGist() {
@@ -507,8 +512,6 @@ function saveAssign(btn){
 }
 
 (async function init(){
-  setSyncStatus('saving');
-  setSyncStatus('idle');
   await loadFromGist();
   render();
 })();
