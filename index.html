@@ -105,7 +105,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink)
 
 <div class="app-header">
   <h1>Japan Trip 2026 ✦</h1>
-  <p>May 21 – June 5 &nbsp;·&nbsp; Tokyo &amp; Osaka &nbsp;·&nbsp; Family of 4</p>
+  <p>May 21 – June 5 &nbsp;·&nbsp; Tokyo &amp; Osaka &nbsp;·&nbsp; Family of 4 &nbsp;<span id="syncBadge" style="font-size:11px;"></span></p>
 </div>
 
 <div class="toolbar">
@@ -154,6 +154,57 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink)
 
 <script>
 const SK = 'japan2026_v5';
+const GIST_ID = '7c1a1ee024b55ac3fd649bed146a42bd';
+const GIST_TOKEN = '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';
+const GIST_FILE = 'japan_trip.json';
+let syncStatus = 'idle'; // idle | saving | saved | error
+
+async function loadFromGist() {
+  try {
+    const res = await fetch('https://api.github.com/gists/' + GIST_ID, {
+      headers: { 'Authorization': 'token ' + GIST_TOKEN }
+    });
+    const data = await res.json();
+    const raw = data.files[GIST_FILE] && data.files[GIST_FILE].content;
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        spots = parsed;
+        localStorage.setItem(SK, JSON.stringify(spots));
+      }
+    }
+  } catch(e) { console.warn('Gist load failed, using local data', e); }
+}
+
+async function saveToGist() {
+  setSyncStatus('saving');
+  try {
+    await fetch('https://api.github.com/gists/' + GIST_ID, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': 'token ' + GIST_TOKEN,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        files: { [GIST_FILE]: { content: JSON.stringify(spots) } }
+      })
+    });
+    setSyncStatus('saved');
+  } catch(e) {
+    setSyncStatus('error');
+    console.warn('Gist save failed', e);
+  }
+}
+
+function setSyncStatus(s) {
+  syncStatus = s;
+  const el = document.getElementById('syncBadge');
+  if (!el) return;
+  if (s === 'saving') { el.textContent = '⏳ Saving...'; el.style.color = 'rgba(255,255,255,0.5)'; }
+  else if (s === 'saved') { el.textContent = '✓ Synced'; el.style.color = '#6EE7B7'; setTimeout(() => { if(syncStatus==='saved') setSyncStatus('idle'); }, 2500); }
+  else if (s === 'error') { el.textContent = '⚠ Sync failed'; el.style.color = '#FCA5A5'; }
+  else { el.textContent = ''; }
+}
 
 const DAYS = [
   {id:1,date:'May 21',dow:'Thu',type:'tokyo',title:'Arrival – Asakusa'},
@@ -203,7 +254,10 @@ function loadSpots(){
   try{const s=localStorage.getItem(SK);if(s)return JSON.parse(s);}catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT_SPOTS));
 }
-function save(){try{localStorage.setItem(SK,JSON.stringify(spots));}catch(e){}}
+function save(){
+  try{localStorage.setItem(SK,JSON.stringify(spots));}catch(e){}
+  saveToGist();
+}
 
 // ── RENDER ──
 function render(){
@@ -452,7 +506,12 @@ function saveAssign(btn){
   assign(spotId, val === '' ? null : parseInt(val));
 }
 
-render();
+(async function init(){
+  setSyncStatus('saving');
+  setSyncStatus('idle');
+  await loadFromGist();
+  render();
+})();
 </script>
 </body>
 </html>
